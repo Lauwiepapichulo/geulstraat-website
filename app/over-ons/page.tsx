@@ -71,9 +71,12 @@ export default async function OverOnsPage() {
             {label: 'Home', href: '/'},
             {label: 'Over ons', href: '/over-ons'},
           ]} />
-          <h1 className="text-4xl md:text-5xl font-bold text-white mt-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mt-6 mb-4">
             {pageData?.title || 'Over ons'}
           </h1>
+          <p className="text-xl text-white/90 max-w-2xl">
+            Ontmoet de mensen achter het buurtplatform van de Geulstraat
+          </p>
         </div>
       </div>
 
