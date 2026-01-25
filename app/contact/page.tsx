@@ -20,12 +20,12 @@ export default async function ContactPage() {
     <div className="min-h-screen bg-[#FAFBFC]">
       {/* Header */}
       <div className="bg-gradient-to-br from-[#1E3A5F] via-[#2D5A87] to-[#152B47] pt-24 md:pt-28 pb-16 md:pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumbs items={[
             {label: 'Home', href: '/'},
             {label: 'Contact', href: '/contact'},
           ]} />
-          <h1 className="text-4xl md:text-5xl font-bold text-white mt-6 mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-6 mb-4">
             Contact
           </h1>
           <p className="text-xl text-white/90 max-w-2xl">
