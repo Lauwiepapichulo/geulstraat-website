@@ -89,8 +89,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteSettings = await client.fetch(siteSettingsQuery).catch(() => null)
   
   return {
-    title: siteSettings?.title || "Buurtplatform - Blijf op de hoogte",
-    description: siteSettings?.description || "Het digitale platform voor onze buurt. Nieuws, buurt acties en meer.",
+    title: siteSettings?.title || "De Geulstraat - Buurtplatform",
+    description: siteSettings?.description || "Het digitale platform voor de Geulstraat. Nieuws, buurt acties en meer.",
   }
 }
 
@@ -113,7 +113,7 @@ export default async function RootLayout({
 
   return (
     <html lang="nl" className={`${inter.variable} ${merriweather.variable} ${nunito.variable}`}>
-      <body className="flex flex-col min-h-screen font-sans antialiased">
+      <body className="flex flex-col min-h-screen font-sans antialiased bg-[#FAFBFC]">
         <Navbar 
           logoUrl={logoUrl}
           siteName={siteSettings?.title || "De Geulstraat"}

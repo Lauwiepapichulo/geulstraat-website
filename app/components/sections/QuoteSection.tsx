@@ -1,4 +1,8 @@
+'use client'
+
 import Image from 'next/image'
+import {motion, useInView} from 'framer-motion'
+import {useRef} from 'react'
 
 interface QuoteSectionProps {
   quote: string
@@ -13,10 +17,10 @@ interface QuoteSectionProps {
 
 const bgClasses: Record<string, string> = {
   white: 'bg-white',
-  gray: 'bg-slate-50',
-  emerald: 'bg-emerald-50/50',
-  beige: 'bg-amber-50/50',
-  dark: 'bg-slate-800',
+  gray: 'bg-[#F8F9FA]',
+  emerald: 'bg-[#1E3A5F]/5',
+  beige: 'bg-gradient-to-br from-slate-50 to-slate-100',
+  dark: 'bg-slate-900',
 }
 
 const textColorClasses: Record<string, string> = {
@@ -43,6 +47,9 @@ export default function QuoteSection({
   textAlign = 'center',
   padding = 'normal',
 }: QuoteSectionProps) {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  
   const bgClass = bgClasses[backgroundColor] || bgClasses.white
   const textColor = textColorClasses[backgroundColor] || textColorClasses.white
   const paddingClass = paddingClasses[padding] || paddingClasses.normal
@@ -51,18 +58,23 @@ export default function QuoteSection({
   // Simple elegant quote with subtle styling
   if (style === 'simple') {
     return (
-      <section className={`${bgClass} ${paddingClass}`}>
-        <div className={`max-w-3xl mx-auto px-6 sm:px-8 lg:px-12 text-${textAlign}`}>
-          <blockquote className={`text-xl md:text-2xl font-light leading-relaxed ${textColor} italic`}>
-            <span className={`${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>"</span>
-            {quote}
-            <span className={`${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>"</span>
+      <section ref={ref} className={`${bgClass} ${paddingClass}`}>
+        <motion.div 
+          className={`max-w-3xl mx-auto px-6 sm:px-8 lg:px-12 text-${textAlign}`}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <blockquote className={`border-l-2 ${isDark ? 'border-[#3B82A0]/40' : 'border-[#1E3A5F]/20'} pl-4`}>
+            <p className={`text-base leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              {quote}
+            </p>
           </blockquote>
 
           {(author || imageUrl) && (
-            <div className={`mt-6 flex items-center ${textAlign === 'center' ? 'justify-center' : textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-3`}>
+            <div className={`mt-6 flex items-center ${textAlign === 'center' ? 'justify-center' : textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-3 pl-5`}>
               {imageUrl && (
-                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white shadow-sm">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/5">
                   <Image
                     src={imageUrl}
                     alt={author || 'Auteur'}
@@ -75,18 +87,18 @@ export default function QuoteSection({
               <div className={textAlign === 'center' && !imageUrl ? 'text-center' : ''}>
                 {author && (
                   <cite className={`not-italic text-sm font-medium ${textColor}`}>
-                    — {author}
+                    {author}
                   </cite>
                 )}
                 {authorRole && (
-                  <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    , {authorRole}
-                  </span>
+                  <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {authorRole}
+                  </p>
                 )}
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
       </section>
     )
   }
@@ -94,17 +106,22 @@ export default function QuoteSection({
   // Decorative quote with elegant left border
   if (style === 'decorative') {
     return (
-      <section className={`${bgClass} ${paddingClass}`}>
-        <div className="max-w-3xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className={`border-l-2 ${isDark ? 'border-emerald-400' : 'border-emerald-500'} pl-6 md:pl-8`}>
-            <blockquote className={`text-xl md:text-2xl font-light leading-relaxed ${textColor}`}>
+      <section ref={ref} className={`${bgClass} ${paddingClass}`}>
+        <motion.div 
+          className="max-w-3xl mx-auto px-6 sm:px-8 lg:px-12"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className={`border-l-2 ${isDark ? 'border-[#3B82A0]/60' : 'border-[#1E3A5F]/30'} pl-4`}>
+            <blockquote className={`text-base leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
               {quote}
             </blockquote>
 
             {(author || imageUrl) && (
-              <div className="mt-6 flex items-center gap-3">
+              <div className="mt-5 flex items-center gap-3">
                 {imageUrl && (
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white shadow-sm">
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/5">
                     <Image
                       src={imageUrl}
                       alt={author || 'Auteur'}
@@ -121,7 +138,7 @@ export default function QuoteSection({
                     </cite>
                   )}
                   {authorRole && (
-                    <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                       {authorRole}
                     </p>
                   )}
@@ -129,26 +146,31 @@ export default function QuoteSection({
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </section>
     )
   }
 
   // Boxed quote with card styling
   return (
-    <section className={`${bgClass} ${paddingClass}`}>
-      <div className="max-w-3xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className={`${isDark ? 'bg-slate-700/50' : 'bg-white'} rounded-xl shadow-sm p-8 md:p-10 text-${textAlign} ${!isDark ? 'border border-slate-100' : ''}`}>
-          <blockquote className={`text-lg md:text-xl font-light leading-relaxed ${textColor}`}>
-            <span className={`${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>"</span>
-            {quote}
-            <span className={`${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>"</span>
+    <section ref={ref} className={`${bgClass} ${paddingClass}`}>
+      <motion.div 
+        className="max-w-3xl mx-auto px-6 sm:px-8 lg:px-12"
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className={`${isDark ? 'bg-slate-800/50' : 'bg-slate-50'} rounded-lg p-5 md:p-6 text-${textAlign}`}>
+          <blockquote>
+            <p className={`text-base leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              {quote}
+            </p>
           </blockquote>
 
           {(author || imageUrl) && (
-            <div className={`mt-6 flex items-center ${textAlign === 'center' ? 'justify-center' : textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-3`}>
+            <div className={`mt-5 flex items-center ${textAlign === 'center' ? 'justify-center' : textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-3`}>
               {imageUrl && (
-                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white shadow-sm">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-black/5">
                   <Image
                     src={imageUrl}
                     alt={author || 'Auteur'}
@@ -161,19 +183,19 @@ export default function QuoteSection({
               <div className={textAlign === 'center' && !imageUrl ? 'text-center' : ''}>
                 {author && (
                   <cite className={`not-italic text-sm font-medium ${textColor}`}>
-                    — {author}
+                    {author}
                   </cite>
                 )}
                 {authorRole && (
-                  <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    , {authorRole}
-                  </span>
+                  <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {authorRole}
+                  </p>
                 )}
               </div>
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </section>
   )
 }

@@ -10,8 +10,8 @@ const projectId = 'vs1rb6mu'
 const dataset = 'production'
 
 export default defineConfig({
-  name: 'buurtplatform',
-  title: 'Buurtplatform - Beheer',
+  name: 'geulstraat',
+  title: 'Geulstraat website admin',
   
   projectId,
   dataset,

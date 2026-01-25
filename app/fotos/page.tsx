@@ -61,7 +61,7 @@ export default async function FotosPage() {
                 <div className="relative h-64 w-full overflow-hidden">
                   {gallery.coverImage?.asset ? (
                     <Image
-                      src={urlFor(gallery.coverImage).width(800).height(600).fit('crop').auto('format').url()}
+                      src={urlFor(gallery.coverImage).width(800).fit('max').auto('format').url()}
                       alt={gallery.coverImage.alt || gallery.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"

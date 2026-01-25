@@ -1,6 +1,8 @@
 import {client} from '@/lib/sanity.client'
 import imageUrlBuilder from '@sanity/image-url'
 import Breadcrumbs from '../components/Breadcrumbs'
+import ReadingProgress from '../components/ReadingProgress'
+import TableOfContents from '../components/TableOfContents'
 import {
   HeroSection,
   TextSection,
@@ -115,30 +117,68 @@ const overDeBuurtQuery = `*[_type == "overDeBuurt"][0] {
   }
 }`
 
-// Divider component
+// Elegant divider with multiple styles
 function Divider({ style }: { style: string }) {
   switch (style) {
     case 'line':
-      return <hr className="border-t border-slate-200 max-w-6xl mx-auto" />
+      return (
+        <div className="py-8">
+          <hr className="border-t border-slate-200/60 max-w-2xl mx-auto" />
+        </div>
+      )
     case 'thick':
-      return <hr className="border-t-4 border-slate-300 max-w-6xl mx-auto" />
+      return (
+        <div className="py-8">
+          <hr className="border-t-2 border-slate-200 max-w-xl mx-auto" />
+        </div>
+      )
     case 'dotted':
-      return <hr className="border-t-2 border-dotted border-slate-300 max-w-6xl mx-auto" />
+      return (
+        <div className="py-10 flex items-center justify-center gap-3">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+        </div>
+      )
     case 'decorative':
       return (
-        <div className="flex items-center justify-center py-8">
-          <div className="flex-1 border-t border-slate-200 max-w-xs"></div>
-          <div className="px-4 text-emerald-500 text-2xl">✦</div>
-          <div className="flex-1 border-t border-slate-200 max-w-xs"></div>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex-1 border-t border-slate-200/50 max-w-[120px]"></div>
+          <div className="px-6 text-[#3B82A0]/60 text-lg">✦</div>
+          <div className="flex-1 border-t border-slate-200/50 max-w-[120px]"></div>
         </div>
       )
     case 'space-small':
-      return <div className="h-8" />
+      return <div className="h-8 md:h-12" />
     case 'space-large':
-      return <div className="h-16" />
+      return <div className="h-16 md:h-24" />
     default:
-      return <hr className="border-t border-slate-200 max-w-6xl mx-auto" />
+      return (
+        <div className="py-8">
+          <hr className="border-t border-slate-200/60 max-w-2xl mx-auto" />
+        </div>
+      )
   }
+}
+
+// Alternating background colors for visual rhythm
+const backgroundColors = ['white', 'gray', 'white', 'emerald', 'white', 'beige']
+
+// Helper to generate section IDs for navigation
+function generateSectionId(section: any, index: number): string {
+  if (section.title) {
+    return section.title.toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, '-')
+      .slice(0, 40)
+  }
+  return `sectie-${index + 1}`
+}
+
+// Helper to get section title for TOC
+function getSectionTitle(section: any): string | null {
+  if (section._type === 'divider') return null
+  return section.title || section.sectionTitle || null
 }
 
 export default async function OverDeBuurtPage() {
@@ -146,7 +186,7 @@ export default async function OverDeBuurtPage() {
 
   if (!pageData) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFBFC]">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-slate-900 mb-4">
             Pagina niet gevonden
@@ -162,33 +202,81 @@ export default async function OverDeBuurtPage() {
   // Check if there's a hero section as the first section
   const hasHeroFirst = pageData.sections?.[0]?._type === 'heroSection'
 
+  // Build TOC items from sections with titles
+  const tocItems = (pageData.sections || [])
+    .map((section: any, index: number) => {
+      const title = getSectionTitle(section)
+      if (!title) return null
+      return {
+        id: generateSectionId(section, index),
+        title,
+        type: section._type,
+      }
+    })
+    .filter(Boolean)
+
+  // Track non-divider section index for alternating backgrounds
+  let contentSectionIndex = 0
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAFBFC]">
+      {/* Reading Progress Indicator */}
+      <ReadingProgress />
+      
+      {/* Table of Contents for navigation */}
+      <TableOfContents items={tocItems} />
+
       {/* Header - only show if no hero section first */}
       {!hasHeroFirst && (
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-500 py-16 md:py-24">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative bg-gradient-to-br from-[#1E3A5F] via-[#2D5A87] to-[#152B47] pt-24 md:pt-32 pb-20 md:pb-28 overflow-hidden">
+          {/* Subtle pattern */}
+          <div className="absolute inset-0 opacity-5" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: '32px 32px'
+          }} />
+          
+          <div className="relative max-w-4xl mx-auto px-6 sm:px-8 lg:px-12">
             <Breadcrumbs items={[
               {label: 'Home', href: '/'},
               {label: pageData.title || 'Over de buurt', href: '/over-de-buurt'},
             ]} />
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-6 text-balance">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-8 text-balance tracking-tight">
               {pageData.title || 'Over de buurt'}
             </h1>
+            
+            {/* Decorative element */}
+            <div className="mt-8 flex items-center gap-4">
+              <span className="w-12 h-1 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
+              <span className="text-white/60 text-sm font-medium tracking-wide">
+                {tocItems.length} secties
+              </span>
+            </div>
           </div>
         </div>
       )}
 
       {/* Sections */}
       {pageData.sections && pageData.sections.length > 0 ? (
-        <div>
+        <div className="relative">
           {pageData.sections.map((section: any, index: number) => {
             const key = section._key || index
+            const sectionId = generateSectionId(section, index)
+            
+            // Skip dividers for background alternation
+            const isContentSection = section._type !== 'divider'
+            const bgColorKey = isContentSection 
+              ? backgroundColors[contentSectionIndex % backgroundColors.length]
+              : undefined
+            
+            if (isContentSection) {
+              contentSectionIndex++
+            }
+
+            // Determine if this section should use article variant (for better typography)
+            const useArticleVariant = section._type === 'textSection' || section._type === 'mediaSection'
 
             switch (section._type) {
               case 'heroSection':
-                // Use urlFor to generate URL with crop/hotspot applied
-                // Use fit('max') to respect the user's crop aspect ratio
                 const heroImageUrl = section.backgroundImage?.asset 
                   ? urlFor(section.backgroundImage).width(1920).fit('max').auto('format').url()
                   : undefined
@@ -208,36 +296,38 @@ export default async function OverDeBuurtPage() {
                 return (
                   <TextSection
                     key={key}
+                    id={sectionId}
                     title={section.title}
                     content={section.content || []}
                     columns={section.columns}
                     icon={section.icon}
-                    backgroundColor={section.backgroundColor}
+                    backgroundColor={section.backgroundColor || bgColorKey}
                     textAlign={section.textAlign}
-                    padding={section.padding}
+                    padding={section.padding || 'normal'}
                     button={section.button}
+                    variant="article"
                   />
                 )
 
               case 'mediaSection':
-                // Use urlFor to generate URL with crop/hotspot applied
-                // Use fit('max') to respect the user's crop aspect ratio
                 const mediaImageUrl = section.image?.asset 
                   ? urlFor(section.image).width(1200).fit('max').auto('format').url()
                   : undefined
                 return (
                   <MediaSection
                     key={key}
+                    id={sectionId}
                     title={section.title}
                     content={section.content || []}
                     imageUrl={mediaImageUrl}
                     imageAlt={section.image?.alt || section.title || 'Afbeelding'}
                     layout={section.layout}
                     imageSize={section.imageSize}
-                    backgroundColor={section.backgroundColor}
+                    backgroundColor={section.backgroundColor || bgColorKey}
                     textAlign={section.textAlign}
-                    padding={section.padding}
+                    padding={section.padding || 'normal'}
                     button={section.button}
+                    variant="article"
                   />
                 )
 
@@ -247,15 +337,13 @@ export default async function OverDeBuurtPage() {
                     key={key}
                     title={section.title}
                     images={(section.images || []).map((img: any, i: number) => ({
-                      // Use urlFor to generate URL with crop/hotspot applied
-                      // Use fit('max') to respect the user's crop aspect ratio
                       url: img.asset ? urlFor(img).width(800).fit('max').auto('format').url() : '',
                       alt: img.alt || `Foto ${i + 1}`,
                       caption: img.caption,
                     })).filter((img: any) => img.url)}
                     columns={section.columns}
                     showCaptions={section.showCaptions}
-                    backgroundColor={section.backgroundColor}
+                    backgroundColor={section.backgroundColor || bgColorKey}
                     textAlign={section.textAlign}
                     padding={section.padding}
                   />
@@ -273,7 +361,7 @@ export default async function OverDeBuurtPage() {
                     authorRole={section.authorRole}
                     imageUrl={quoteImageUrl}
                     style={section.style}
-                    backgroundColor={section.backgroundColor}
+                    backgroundColor={section.backgroundColor || bgColorKey}
                     textAlign={section.textAlign}
                     padding={section.padding}
                   />
@@ -301,10 +389,9 @@ export default async function OverDeBuurtPage() {
                       year: event.year,
                       title: event.title,
                       description: event.description,
-                      // Use urlFor to generate URL with crop/hotspot applied
                       imageUrl: event.image?.asset ? urlFor(event.image).width(600).fit('max').auto('format').url() : undefined,
                     }))}
-                    backgroundColor={section.backgroundColor}
+                    backgroundColor={section.backgroundColor || bgColorKey}
                     textAlign={section.textAlign}
                     padding={section.padding}
                   />
@@ -318,7 +405,7 @@ export default async function OverDeBuurtPage() {
                     subtitle={section.subtitle}
                     cards={section.cards || []}
                     columns={section.columns}
-                    backgroundColor={section.backgroundColor}
+                    backgroundColor={section.backgroundColor || bgColorKey}
                     textAlign={section.textAlign}
                     padding={section.padding}
                   />
@@ -335,13 +422,15 @@ export default async function OverDeBuurtPage() {
                 return (
                   <MediaSection
                     key={key}
+                    id={sectionId}
                     title={section.sectionTitle}
                     content={section.text || []}
                     imageUrl={legacyImageUrl}
                     imageAlt={section.image?.alt || section.sectionTitle || 'Afbeelding'}
                     layout={section.layout || 'text-left'}
-                    backgroundColor={section.legacyStyle?.backgroundColor}
+                    backgroundColor={section.legacyStyle?.backgroundColor || bgColorKey}
                     padding="normal"
+                    variant="article"
                   />
                 )
 
@@ -349,10 +438,19 @@ export default async function OverDeBuurtPage() {
                 return null
             }
           })}
+
+          {/* Elegant page end decoration */}
+          <div className="py-16 flex items-center justify-center">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-px bg-slate-200" />
+              <span className="w-2 h-2 rounded-full bg-slate-200" />
+              <span className="w-8 h-px bg-slate-200" />
+            </div>
+          </div>
         </div>
       ) : (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white rounded-xl p-8 md:p-12 shadow-md text-center">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+          <div className="bg-white rounded-2xl p-10 md:p-14 shadow-[0_4px_24px_-8px_rgb(30_58_95/0.08)] border border-slate-100 text-center">
             <p className="text-slate-600 text-lg">
               Deze pagina heeft nog geen secties. Voeg secties toe in Sanity Studio.
             </p>

@@ -1,34 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  /* Geulstraat Color Palette - Fresh and Inviting */
-  --background: 250 250 250;       /* #FAFAFA - Off-white, easier on eyes */
-  --foreground: 30 41 59;          /* slate-800 - Deep dark gray, softer than black */
+  /* Klassiek Blauw Kleurenpalet */
+  --background: 250 251 252;         /* #FAFBFC - Licht grijsblauw */
+  --foreground: 31 41 55;            /* #1F2937 - Donkere tekst */
   
-  --primary: 5 150 105;             /* emerald-600 - Smaragdgroen for actions */
+  --primary: 30 58 95;               /* #1E3A5F - Diep navy */
+  --primary-hover: 21 43 71;         /* #152B47 - Navy hover */
   --primary-foreground: 255 255 255;
   
-  --secondary: 241 245 249;         /* slate-100 - Subtle backgrounds */
-  --secondary-foreground: 30 41 59;
+  --secondary: 91 124 153;           /* #5B7C99 - Gedempte blauwgrijs */
+  --secondary-foreground: 255 255 255;
   
-  --accent: 16 185 129;             /* emerald-500 - Lighter accent */
+  --accent: 59 130 160;              /* #3B82A0 - Medium blauw */
   --accent-foreground: 255 255 255;
   
-  --muted: 241 245 249;             /* slate-100 */
-  --muted-foreground: 100 116 139;  /* slate-500 */
+  --muted: 243 244 246;              /* #F3F4F6 - Licht grijs */
+  --muted-foreground: 107 114 128;   /* #6B7280 - Subtekst */
   
-  --card: 255 255 255;              /* Pure white for cards */
-  --card-foreground: 30 41 59;
+  --card: 255 255 255;               /* #FFFFFF - Wit voor cards */
+  --card-foreground: 31 41 55;
   
-  --border: 226 232 240;            /* slate-200 - Light gray borders */
-  --input: 226 232 240;
-  --ring: 5 150 105;                /* emerald-600 */
+  --border: 229 231 235;             /* #E5E7EB - Randen */
+  --input: 229 231 235;
+  --ring: 30 58 95;                  /* Navy voor focus ring */
   
-  --radius: 0.75rem;                /* 12px - Friendly, modern corners */
+  --radius: 0.75rem;                 /* 12px - Moderne afronding */
 }
 
 @theme inline {
-  /* Typography - Modern and accessible */
+  /* Typography */
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-serif), Georgia, Cambria, serif;
   --font-playful: var(--font-playful), var(--font-sans);
@@ -37,6 +38,7 @@
   --color-background: rgb(var(--background));
   --color-foreground: rgb(var(--foreground));
   --color-primary: rgb(var(--primary));
+  --color-primary-hover: rgb(var(--primary-hover));
   --color-primary-foreground: rgb(var(--primary-foreground));
   --color-secondary: rgb(var(--secondary));
   --color-accent: rgb(var(--accent));
@@ -45,7 +47,7 @@
   --color-card: rgb(var(--card));
   --color-border: rgb(var(--border));
   
-  /* Slate color palette for utility */
+  /* Gray/Slate color palette */
   --color-slate-50: #f8fafc;
   --color-slate-100: #f1f5f9;
   --color-slate-200: #e2e8f0;
@@ -57,37 +59,42 @@
   --color-slate-800: #1e293b;
   --color-slate-900: #0f172a;
   
-  /* Base font sizing: Accessible and readable */
-  --font-size-xs: 0.75rem;    /* 12px */
-  --font-size-sm: 0.875rem;   /* 14px */
-  --font-size-base: 1rem;     /* 16px */
-  --font-size-lg: 1.125rem;   /* 18px */
-  --font-size-xl: 1.25rem;    /* 20px */
-  --font-size-2xl: 1.5rem;    /* 24px */
-  --font-size-3xl: 1.875rem;  /* 30px */
-  --font-size-4xl: 2.25rem;   /* 36px */
-  --font-size-5xl: 3rem;      /* 48px */
-  --font-size-6xl: 3.75rem;   /* 60px */
+  /* Font sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
   
-  /* Spacing scale */
-  --spacing-touch: 44px;      /* Minimum touch target */
+  /* Spacing */
+  --spacing-touch: 44px;
   
-  /* Border radius - Friendly and modern */
+  /* Border radius */
   --radius: var(--radius);
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
   
-  /* Modern shadows with soft edges */
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  /* Shadows - Navy tinted */
+  --shadow-sm: 0 1px 2px 0 rgb(30 58 95 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(30 58 95 / 0.08), 0 2px 4px -2px rgb(30 58 95 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(30 58 95 / 0.08), 0 4px 6px -4px rgb(30 58 95 / 0.05);
+  --shadow-xl: 0 20px 25px -5px rgb(30 58 95 / 0.08), 0 8px 10px -6px rgb(30 58 95 / 0.05);
+  
+  /* Card shadows */
+  --shadow-card: 0 4px 20px -4px rgb(30 58 95 / 0.08), 0 2px 8px -2px rgb(30 58 95 / 0.04);
+  --shadow-card-hover: 0 12px 28px -8px rgb(30 58 95 / 0.15), 0 4px 12px -4px rgb(30 58 95 / 0.06);
 }
 
-/* Modern, accessible body styling */
+/* Body styling */
 body {
   background-color: rgb(var(--background));
   color: rgb(var(--foreground));
@@ -99,29 +106,181 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Accessible focus states with modern ring */
+/* Focus states */
 *:focus-visible {
-  outline: 2px solid rgb(var(--ring));
+  outline: 2px solid rgb(var(--primary));
   outline-offset: 2px;
   border-radius: 0.25rem;
 }
 
-/* Smooth transitions for state-of-the-art feel */
+/* Smooth transitions */
 a, button {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Ensure images are responsive by default */
+/* Responsive images */
 img {
   max-width: 100%;
   height: auto;
 }
 
-/* Utility classes for modern design */
+/* Text utilities */
 .text-balance {
   text-wrap: balance;
 }
 
 .text-pretty {
   text-wrap: pretty;
+}
+
+/* Button hover glow */
+.btn-glow:hover {
+  box-shadow: 0 4px 16px -4px rgb(30 58 95 / 0.25);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--secondary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--primary));
+}
+
+/* Article/Prose Typography Enhancements */
+.font-serif {
+  font-family: var(--font-serif), Georgia, Cambria, serif;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better text rendering for article content */
+article, 
+.prose,
+[data-reading-content] {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* First letter drop cap for articles */
+.drop-cap::first-letter {
+  float: left;
+  font-size: 3.5em;
+  line-height: 0.85;
+  margin-right: 0.1em;
+  font-weight: 600;
+  color: rgb(var(--primary));
+}
+
+/* Pull quote styling */
+.pull-quote {
+  position: relative;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  font-size: 1.25rem;
+  font-style: italic;
+  color: rgb(var(--foreground) / 0.8);
+  border-left: 3px solid rgb(var(--accent));
+  background: linear-gradient(to right, rgb(var(--accent) / 0.05), transparent);
+}
+
+/* Reading progress bar animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Section transitions */
+section {
+  position: relative;
+}
+
+/* Elegant separator styling */
+.section-separator {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgb(var(--border)),
+    transparent
+  );
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+/* Reading-optimized line length */
+.reading-width {
+  max-width: 65ch;
+}
+
+/* Table of Contents sidebar fade */
+.toc-fade-in {
+  animation: fadeSlideIn 0.3s ease-out;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Subtle hover effects for cards and images */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), 
+              box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -12px rgb(30 58 95 / 0.15);
+}
+
+/* Content image styling */
+.content-image {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px -4px rgb(30 58 95 / 0.1);
+}
+
+/* Gradient text for headers */
+.gradient-text {
+  background: linear-gradient(135deg, rgb(var(--primary)), rgb(var(--accent)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
 }

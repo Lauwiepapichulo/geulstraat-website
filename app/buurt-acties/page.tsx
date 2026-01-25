@@ -42,7 +42,7 @@ const pastActiesQuery = `*[_type == "buurtActie" && datetime < now()] | order(da
 }`
 
 export const metadata = {
-  title: 'Buurt acties - Buurtplatform',
+  title: 'Buurt acties - De Geulstraat',
   description: 'Bekijk alle aankomende buurt acties en activiteiten in de Geulstraat',
 }
 
@@ -51,9 +51,9 @@ export default async function BuurtActiesPage() {
   const pastActies = await client.fetch(pastActiesQuery).catch(() => [])
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAFBFC]">
       {/* Header */}
-      <div className="bg-gradient-to-br from-violet-500 to-purple-500 py-16 md:py-24">
+      <div className="bg-gradient-to-br from-[#1E3A5F] via-[#2D5A87] to-[#152B47] pt-24 md:pt-28 pb-16 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumbs items={[
             {label: 'Home', href: '/'},
@@ -71,9 +71,9 @@ export default async function BuurtActiesPage() {
       {/* Calendar View */}
       {upcomingActies.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-xl p-6 shadow-md">
+          <div className="bg-white rounded-xl p-6 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
             <div className="flex items-center space-x-3 mb-4">
-              <Calendar className="w-6 h-6 text-emerald-600" />
+              <Calendar className="w-6 h-6 text-[#1E3A5F]" />
               <h2 className="text-2xl font-bold text-slate-900">
                 Aankomende acties
               </h2>
@@ -88,9 +88,9 @@ export default async function BuurtActiesPage() {
                   <a
                     key={actie._id}
                     href={`#actie-${actie._id}`}
-                    className="flex flex-col items-center justify-center bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 hover:border-emerald-600 rounded-lg p-3 min-w-[80px] transition-all hover:scale-105"
+                    className="flex flex-col items-center justify-center bg-[#1E3A5F]/5 hover:bg-[#1E3A5F]/10 border-2 border-[#1E3A5F]/20 hover:border-[#1E3A5F] rounded-lg p-3 min-w-[80px] transition-all hover:scale-105"
                   >
-                    <span className="text-2xl font-bold text-emerald-600">{day}</span>
+                    <span className="text-2xl font-bold text-[#1E3A5F]">{day}</span>
                     <span className="text-sm text-slate-600 capitalize">{month}</span>
                   </a>
                 )
@@ -109,9 +109,8 @@ export default async function BuurtActiesPage() {
         {upcomingActies.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {upcomingActies.map((actie: any) => {
-              // Use urlFor to apply crop/hotspot
               const imageUrl = actie.image?.asset 
-                ? urlFor(actie.image).width(800).height(600).fit('crop').auto('format').url()
+                ? urlFor(actie.image).width(800).fit('max').auto('format').url()
                 : undefined
               return (
                 <div key={actie._id} id={`actie-${actie._id}`}>
@@ -130,7 +129,7 @@ export default async function BuurtActiesPage() {
             })}
           </div>
         ) : (
-          <div className="bg-white rounded-xl p-12 text-center shadow-md">
+          <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
             <p className="text-slate-600 text-lg">
               Er staan momenteel geen buurt acties gepland. Check later terug!
             </p>
@@ -144,15 +143,14 @@ export default async function BuurtActiesPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
             Archief
           </h2>
-          <details className="bg-white rounded-xl p-6 shadow-md">
-            <summary className="cursor-pointer font-semibold text-lg text-slate-900 hover:text-emerald-600 transition-colors">
+          <details className="bg-white rounded-xl p-6 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
+            <summary className="cursor-pointer font-semibold text-lg text-slate-900 hover:text-[#1E3A5F] transition-colors">
               Bekijk eerdere buurt acties ({pastActies.length})
             </summary>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pastActies.map((actie: any) => {
-                // Use urlFor to apply crop/hotspot
                 const imageUrl = actie.image?.asset 
-                  ? urlFor(actie.image).width(800).height(600).fit('crop').auto('format').url()
+                  ? urlFor(actie.image).width(800).fit('max').auto('format').url()
                   : undefined
                 return (
                   <BuurtActieCard
@@ -175,4 +173,4 @@ export default async function BuurtActiesPage() {
   )
 }
 
-export const revalidate = 60 // Revalidate every 60 seconds
+export const revalidate = 60

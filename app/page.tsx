@@ -1,6 +1,7 @@
 import Hero from './components/Hero'
 import NewsCard from './components/NewsCard'
 import BuurtActieCard from './components/BuurtActieCard'
+import FadeIn, {StaggerContainer, StaggerItem} from './components/FadeIn'
 import Link from 'next/link'
 import {client} from '@/lib/sanity.client'
 import imageUrlBuilder from '@sanity/image-url'
@@ -20,7 +21,18 @@ const homepageQuery = `*[_type == "homepage"][0] {
     crop,
     hotspot,
     alt
-  }
+  },
+  enableSlideshow,
+  heroSlides[] {
+    image {
+      asset->,
+      crop,
+      hotspot
+    },
+    alt
+  },
+  slideshowInterval,
+  slideshowTransition
 }`
 
 // Query for Over de Buurt page (for preview)
@@ -84,124 +96,155 @@ export default async function Home() {
     : 'De Geulstraat is een bruisende straat in de Rivierenbuurt met betrokken bewoners en een duidelijk eigen karakter. In de twintigste eeuw ontwikkelde de straat zich als woon- en schoolstraat binnen Plan Zuid, met drie scholen die het straatbeeld en het dagelijks leven lange tijd bepaalden.'
 
   return (
-    <div>
+    <div className="bg-[#FAFBFC]">
       {/* Hero Section */}
       <Hero
         title={homepage?.heroTitle}
         subtitle={homepage?.heroSubtitle}
-        imageUrl={homepage?.heroImage?.asset ? urlFor(homepage.heroImage).width(1920).fit('max').auto('format').url() : undefined}
-        imageAlt={homepage?.heroImage?.alt}
+        imageUrl={homepage?.heroImage?.asset ? urlFor(homepage.heroImage).width(1600).quality(80).fit('max').auto('format').url() : undefined}
+        imageAlt={homepage?.heroImage?.alt || "De Geulstraat"}
+        enableSlideshow={homepage?.enableSlideshow === true}
+        slides={
+          homepage?.heroSlides
+            ?.filter((slide: any) => slide?.image?.asset)
+            ?.map((slide: any) => ({
+              url: urlFor(slide.image).width(1600).quality(80).fit('max').auto('format').url(),
+              alt: slide.alt || 'Banner foto'
+            })) || []
+        }
+        slideshowInterval={homepage?.slideshowInterval || 5}
+        slideshowTransition={homepage?.slideshowTransition || 'fade'}
       />
 
       {/* Over de Geulstraat Preview Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white rounded-xl p-8 md:p-12 shadow-md">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-            Over de Geulstraat
-          </h2>
-          <p className="text-lg text-slate-700 leading-relaxed mb-8 max-w-4xl">
-            {previewText}
-          </p>
-          <Link
-            href="/over-de-buurt"
-            className="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 py-4 rounded-lg transition-all hover:scale-105 min-h-[56px]"
-          >
-            Lees meer over de Geulstraat
-          </Link>
-        </div>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <FadeIn>
+          <div className="bg-white rounded-xl p-8 md:p-12 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
+              Over de Geulstraat
+            </h2>
+            <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-4xl">
+              {previewText}
+            </p>
+            <Link
+              href="/over-de-buurt"
+              className="inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:shadow-lg min-h-[56px]"
+            >
+              Lees meer over de Geulstraat
+            </Link>
+          </div>
+        </FadeIn>
       </section>
 
       {/* Latest News Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-slate-50">
-        <div className="mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-            Het laatste nieuws
-          </h2>
-          <p className="text-lg text-slate-600">
-            Blijf op de hoogte van wat er speelt in de Geulstraat
-          </p>
-        </div>
+      <section className="py-20 bg-gradient-to-b from-[#FAFBFC] to-[#F3F4F6]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
+                Het laatste nieuws
+              </h2>
+              <p className="text-lg text-slate-500">
+                Blijf op de hoogte van wat er speelt in de Geulstraat
+              </p>
+            </div>
+          </FadeIn>
 
-        {latestNews.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {latestNews.map((post: any) => (
-              <NewsCard
-                key={post._id}
-                title={post.title}
-                excerpt={post.excerpt}
-                imageUrl={post.mainImage?.asset ? urlFor(post.mainImage).width(800).height(600).fit('crop').auto('format').url() : undefined}
-                imageAlt={post.mainImage?.alt}
-                publishedAt={post.publishedAt}
-                slug={post.slug.current}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl p-12 text-center shadow-md">
-            <p className="text-slate-600 text-lg">
-              Er zijn nog geen nieuwsberichten. Check later terug!
-            </p>
-          </div>
-        )}
+          {latestNews.length > 0 ? (
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {latestNews.map((post: any) => (
+                <StaggerItem key={post._id}>
+                  <NewsCard
+                    title={post.title}
+                    excerpt={post.excerpt}
+                    imageUrl={post.mainImage?.asset ? urlFor(post.mainImage).width(800).fit('max').auto('format').url() : undefined}
+                    imageAlt={post.mainImage?.alt || post.title}
+                    publishedAt={post.publishedAt}
+                    slug={post.slug.current}
+                  />
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          ) : (
+            <FadeIn>
+              <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
+                <p className="text-slate-500 text-lg">
+                  Er zijn nog geen nieuwsberichten. Check later terug!
+                </p>
+              </div>
+            </FadeIn>
+          )}
 
-        <div className="text-center mt-10">
-          <Link
-            href="/nieuws"
-            className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold text-lg"
-          >
-            Bekijk alle nieuwsberichten
-            <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+          <FadeIn delay={0.3}>
+            <div className="text-center mt-12">
+              <Link
+                href="/nieuws"
+                className="inline-flex items-center text-[#1E3A5F] hover:text-[#152B47] font-semibold text-lg group"
+              >
+                Bekijk alle nieuwsberichten
+                <svg className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
       {/* Buurt Acties Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-            Buurt acties
-          </h2>
-          <p className="text-lg text-slate-600">
-            Doe mee aan activiteiten in de buurt
-          </p>
-        </div>
+      <section className="py-20 bg-[#FAFBFC]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
+                Buurt acties
+              </h2>
+              <p className="text-lg text-slate-500">
+                Doe mee aan activiteiten in de buurt
+              </p>
+            </div>
+          </FadeIn>
 
-        {upcomingActies.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {upcomingActies.map((actie: any) => (
-              <BuurtActieCard
-                key={actie._id}
-                title={actie.title}
-                description={actie.description}
-                imageUrl={actie.image?.asset ? urlFor(actie.image).width(800).height(600).fit('crop').auto('format').url() : undefined}
-                imageAlt={actie.image?.alt}
-                datetime={actie.datetime}
-                location={actie.location}
-                signupLink={actie.signupLink}
-                slug={actie.slug.current}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl p-12 text-center shadow-md">
-            <p className="text-slate-600 text-lg">
-              Er zijn momenteel geen geplande buurt acties. Check later terug!
-            </p>
-          </div>
-        )}
+          {upcomingActies.length > 0 ? (
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {upcomingActies.map((actie: any) => (
+                <StaggerItem key={actie._id}>
+                  <BuurtActieCard
+                    title={actie.title}
+                    description={actie.description}
+                    imageUrl={actie.image?.asset ? urlFor(actie.image).width(800).fit('max').auto('format').url() : undefined}
+                    imageAlt={actie.image?.alt || actie.title}
+                    datetime={actie.datetime}
+                    location={actie.location}
+                    signupLink={actie.signupLink}
+                    slug={actie.slug.current}
+                  />
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          ) : (
+            <FadeIn>
+              <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
+                <p className="text-slate-500 text-lg">
+                  Er zijn momenteel geen geplande buurt acties. Check later terug!
+                </p>
+              </div>
+            </FadeIn>
+          )}
 
-        <div className="text-center mt-10">
-          <Link
-            href="/buurt-acties"
-            className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold text-lg"
-          >
-            Bekijk alle buurt acties
-            <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+          <FadeIn delay={0.3}>
+            <div className="text-center mt-12">
+              <Link
+                href="/buurt-acties"
+                className="inline-flex items-center text-[#1E3A5F] hover:text-[#152B47] font-semibold text-lg group"
+              >
+                Bekijk alle buurt acties
+                <svg className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </FadeIn>
         </div>
       </section>
     </div>

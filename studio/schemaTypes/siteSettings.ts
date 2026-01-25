@@ -106,21 +106,21 @@ export default defineType({
       type: 'string',
       group: 'contact',
       description: 'Algemeen e-mailadres voor de contact pagina',
-      initialValue: 'info@geulstraat.nl',
+      initialValue: 'info@geulstraatamsterdam.nl',
       validation: (Rule) =>
         Rule.regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, {
           name: 'email',
         }).error('Voer een geldig e-mailadres in'),
     }),
     defineField({
-      name: 'tallyFormUrl',
-      title: 'Tally contactformulier URL',
+      name: 'formspreeEndpoint',
+      title: 'Formspree Endpoint',
       type: 'url',
       group: 'contact',
-      description: 'De embed link van je Tally contactformulier',
+      description: 'De Formspree endpoint URL (bijv. https://formspree.io/f/xxxxxxxx)',
       validation: (Rule) =>
         Rule.uri({
-          scheme: ['http', 'https'],
+          scheme: ['https'],
         }),
     }),
   ],
