@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Sidebar from './components/Sidebar'
+import Providers from './components/Providers'
 import { Analytics } from '@vercel/analytics/react'
 import {client} from '@/lib/sanity.client'
 import imageUrlBuilder from '@sanity/image-url'
@@ -114,15 +115,17 @@ export default async function RootLayout({
   return (
     <html lang="nl" className={`${inter.variable} ${merriweather.variable} ${nunito.variable}`}>
       <body className="flex flex-col min-h-screen font-sans antialiased bg-[#FAFBFC]">
-        <Navbar 
-          logoUrl={logoUrl}
-          siteName={siteSettings?.title || "De Geulstraat"}
-        />
-        <div className="flex-1 flex">
-          {hasNavigation && <Sidebar navigation={navigation} />}
-          <main className="flex-1">{children}</main>
-        </div>
-        <Footer />
+        <Providers>
+          <Navbar 
+            logoUrl={logoUrl}
+            siteName={siteSettings?.title || "De Geulstraat"}
+          />
+          <div className="flex-1 flex">
+            {hasNavigation && <Sidebar navigation={navigation} />}
+            <main className="flex-1">{children}</main>
+          </div>
+          <Footer />
+        </Providers>
         <Analytics />
       </body>
     </html>
