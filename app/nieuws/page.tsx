@@ -40,7 +40,7 @@ export default async function NieuwsPage() {
             {label: 'Home', href: '/'},
             {label: 'Nieuws', href: '/nieuws'},
           ]} />
-          <h1 className="text-4xl md:text-5xl font-bold text-white mt-6 mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-6 mb-4">
             Nieuws
           </h1>
           <p className="text-xl text-white/90 max-w-2xl">
