@@ -1,0 +1,8 @@
+export { default as HeroSection } from './HeroSection'
+export { default as TextSection } from './TextSection'
+export { default as MediaSection } from './MediaSection'
+export { default as QuoteSection } from './QuoteSection'
+export { default as CTASection } from './CTASection'
+export { default as TimelineSection } from './TimelineSection'
+export { default as CardsSection } from './CardsSection'
+export { default as GallerySection } from './GallerySection'
