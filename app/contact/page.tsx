@@ -14,7 +14,7 @@ export const metadata = {
 }
 
 export default async function ContactPage() {
-  const siteSettings = await client.fetch(siteSettingsQuery).catch(() => null)
+  const siteSettings = await client.fetch(siteSettingsQuery, {}, { next: { revalidate: 0 } }).catch(() => null)
 
   return (
     <div className="min-h-screen bg-[#FAFBFC]">

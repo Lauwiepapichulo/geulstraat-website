@@ -28,7 +28,7 @@ const siteSettingsQuery = `*[_type == "siteSettings"][0] {
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear()
-  const siteSettings = await client.fetch(siteSettingsQuery).catch(() => null)
+  const siteSettings = await client.fetch(siteSettingsQuery, {}, { next: { revalidate: 0 } }).catch(() => null)
   const administrators = siteSettings?.administrators || []
 
   return (
