@@ -165,7 +165,7 @@ export const translations = {
       home: 'Home',
     },
   },
-} as const
+}
 
 export type Language = 'nl' | 'en'
 export type Translations = typeof translations.nl
