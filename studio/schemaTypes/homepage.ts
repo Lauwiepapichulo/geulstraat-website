@@ -7,6 +7,7 @@ export default defineType({
   type: 'document',
   icon: DesktopIcon,
   fields: [
+    // === BANNER ===
     defineField({
       name: 'heroTitle',
       title: 'Banner titel',
@@ -119,6 +120,62 @@ export default defineType({
       },
       initialValue: 'fade',
       hidden: ({document}) => document?.enableSlideshow !== true,
+    }),
+
+    // === OVER DE GEULSTRAAT SECTIE ===
+    defineField({
+      name: 'aboutSectionTitle',
+      title: '📖 Over de Geulstraat - Titel',
+      type: 'string',
+      description: 'De titel van deze sectie op de homepage',
+      initialValue: 'Over de Geulstraat',
+    }),
+    defineField({
+      name: 'aboutSectionText',
+      title: '📖 Over de Geulstraat - Tekst',
+      type: 'text',
+      rows: 4,
+      description: 'De tekst die in dit blok wordt getoond',
+      initialValue: 'De Geulstraat is een bruisende straat in de Rivierenbuurt met betrokken bewoners en een duidelijk eigen karakter.',
+    }),
+    defineField({
+      name: 'aboutSectionButtonText',
+      title: '📖 Over de Geulstraat - Knop tekst',
+      type: 'string',
+      description: 'De tekst op de knop',
+      initialValue: 'Lees meer over de Geulstraat',
+    }),
+
+    // === NIEUWS SECTIE ===
+    defineField({
+      name: 'newsSectionTitle',
+      title: '📰 Nieuws - Titel',
+      type: 'string',
+      description: 'De titel boven de nieuwsberichten',
+      initialValue: 'Het laatste nieuws',
+    }),
+    defineField({
+      name: 'newsSectionSubtitle',
+      title: '📰 Nieuws - Ondertitel',
+      type: 'string',
+      description: 'De tekst onder de titel',
+      initialValue: 'Blijf op de hoogte van wat er speelt in de Geulstraat',
+    }),
+
+    // === BUURT ACTIES SECTIE ===
+    defineField({
+      name: 'actiesSectionTitle',
+      title: '🎉 Buurt acties - Titel',
+      type: 'string',
+      description: 'De titel boven de buurt acties',
+      initialValue: 'Buurt acties',
+    }),
+    defineField({
+      name: 'actiesSectionSubtitle',
+      title: '🎉 Buurt acties - Ondertitel',
+      type: 'string',
+      description: 'De tekst onder de titel',
+      initialValue: 'Doe mee aan activiteiten in de buurt',
     }),
   ],
   preview: {

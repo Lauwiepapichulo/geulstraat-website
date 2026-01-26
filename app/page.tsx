@@ -32,7 +32,14 @@ const homepageQuery = `*[_type == "homepage"][0] {
     alt
   },
   slideshowInterval,
-  slideshowTransition
+  slideshowTransition,
+  aboutSectionTitle,
+  aboutSectionText,
+  aboutSectionButtonText,
+  newsSectionTitle,
+  newsSectionSubtitle,
+  actiesSectionTitle,
+  actiesSectionSubtitle
 }`
 
 // Query for Over de Buurt page (for preview)
@@ -91,9 +98,9 @@ export default async function Home() {
   const latestNews = await client.fetch(latestNewsQuery).catch(() => [])
   const upcomingActies = await client.fetch(upcomingActiesQuery).catch(() => [])
 
-  const previewText = overDeBuurt?.content 
-    ? extractTextPreview(overDeBuurt.content)
-    : 'De Geulstraat is een bruisende straat in de Rivierenbuurt met betrokken bewoners en een duidelijk eigen karakter. In de twintigste eeuw ontwikkelde de straat zich als woon- en schoolstraat binnen Plan Zuid, met drie scholen die het straatbeeld en het dagelijks leven lange tijd bepaalden.'
+  const previewText = homepage?.aboutSectionText 
+    || (overDeBuurt?.content ? extractTextPreview(overDeBuurt.content) : null)
+    || 'De Geulstraat is een bruisende straat in de Rivierenbuurt met betrokken bewoners en een duidelijk eigen karakter.'
 
   return (
     <div className="bg-[#FAFBFC]">
@@ -121,7 +128,7 @@ export default async function Home() {
         <FadeIn>
           <div className="bg-white rounded-xl p-8 md:p-12 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
-              Over de Geulstraat
+              {homepage?.aboutSectionTitle || 'Over de Geulstraat'}
             </h2>
             <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-4xl">
               {previewText}
@@ -130,7 +137,7 @@ export default async function Home() {
               href="/over-de-buurt"
               className="inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:shadow-lg min-h-[56px]"
             >
-              Lees meer over de Geulstraat
+              {homepage?.aboutSectionButtonText || 'Lees meer over de Geulstraat'}
             </Link>
           </div>
         </FadeIn>
@@ -142,10 +149,10 @@ export default async function Home() {
           <FadeIn>
             <div className="mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-                Het laatste nieuws
+                {homepage?.newsSectionTitle || 'Het laatste nieuws'}
               </h2>
               <p className="text-lg text-slate-500">
-                Blijf op de hoogte van wat er speelt in de Geulstraat
+                {homepage?.newsSectionSubtitle || 'Blijf op de hoogte van wat er speelt in de Geulstraat'}
               </p>
             </div>
           </FadeIn>
@@ -197,10 +204,10 @@ export default async function Home() {
           <FadeIn>
             <div className="mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-                Buurt acties
+                {homepage?.actiesSectionTitle || 'Buurt acties'}
               </h2>
               <p className="text-lg text-slate-500">
-                Doe mee aan activiteiten in de buurt
+                {homepage?.actiesSectionSubtitle || 'Doe mee aan activiteiten in de buurt'}
               </p>
             </div>
           </FadeIn>

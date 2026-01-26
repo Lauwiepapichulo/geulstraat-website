@@ -3,7 +3,7 @@ export const translations = {
     // Navigation
     nav: {
       home: 'Home',
-      overDeBuurt: 'Over de buurt',
+      overDeBuurt: 'Historie',
       nieuws: 'Nieuws',
       buurtActies: 'Buurt acties',
       overOns: 'Over ons',
@@ -86,7 +86,7 @@ export const translations = {
     // Navigation
     nav: {
       home: 'Home',
-      overDeBuurt: 'About the neighborhood',
+      overDeBuurt: 'History',
       nieuws: 'News',
       buurtActies: 'Community events',
       overOns: 'About us',

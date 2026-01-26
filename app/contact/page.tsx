@@ -95,4 +95,4 @@ export default async function ContactPage() {
   )
 }
 
-export const revalidate = 60
+export const revalidate = 0

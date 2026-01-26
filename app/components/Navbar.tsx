@@ -17,10 +17,14 @@ export default function Navbar({logoUrl, siteName = "Buurtplatform"}: NavbarProp
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
+  const [hasScrolledOnce, setHasScrolledOnce] = useState(false)
   const pathname = usePathname()
   const { scrollY } = useScroll()
   const lastScrollY = useRef(0)
   const { language, setLanguage, t } = useLanguage()
+  
+  // Check if we're on the homepage (which has a dark hero)
+  const isHomepage = pathname === '/'
 
   const navItems = [
     {href: '/', label: t.nav.home},
@@ -40,15 +44,27 @@ export default function Navbar({logoUrl, siteName = "Buurtplatform"}: NavbarProp
   useMotionValueEvent(scrollY, 'change', (latest) => {
     const direction = latest > lastScrollY.current ? 'down' : 'up'
     
+    // Once user has scrolled past 80px, remember this
     if (latest > 80) {
+      setHasScrolledOnce(true)
+    }
+    
+    // When scrolling up and navbar becomes visible again, always use white background
+    // This ensures text is always readable
+    if (hasScrolledOnce && direction === 'up') {
       setIsScrolled(true)
-      if (direction === 'down' && latest > 150) {
-        setIsHidden(true)
-      } else {
-        setIsHidden(false)
-      }
-    } else {
+    } else if (latest > 80) {
+      setIsScrolled(true)
+    } else if (latest <= 20) {
+      // Only reset to transparent when at very top of page
       setIsScrolled(false)
+      setHasScrolledOnce(false)
+    }
+    
+    // Hide/show logic
+    if (direction === 'down' && latest > 150) {
+      setIsHidden(true)
+    } else {
       setIsHidden(false)
     }
     

@@ -18,13 +18,18 @@ export default defineType({
       name: 'slug',
       title: 'Webadres',
       type: 'slug',
-      description: 'Klik op "Generate" om automatisch een webadres te maken.',
+      description: 'Wordt automatisch gegenereerd op basis van de naam.',
       options: {
         source: 'title',
         maxLength: 96,
+        slugify: input => input
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '')
+          .slice(0, 96),
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
-      validation: (Rule) => Rule.required().error('Klik op "Generate" om een webadres te maken'),
+      validation: (Rule) => Rule.required().error('Webadres is verplicht'),
     }),
     defineField({
       name: 'datetime',
@@ -65,10 +70,18 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'acceptsRegistrations',
+      title: 'Inschrijving via website',
+      type: 'boolean',
+      description: 'Schakel in om mensen zich te laten inschrijven via de website',
+      initialValue: true,
+    }),
+    defineField({
       name: 'signupLink',
-      title: 'Link naar inschrijfformulier',
+      title: 'Externe inschrijflink (optioneel)',
       type: 'url',
-      description: 'Plak hier de link die je van Tally krijgt als mensen zich kunnen inschrijven. Laat leeg als inschrijven niet nodig is.',
+      description: 'Alleen invullen als je een EXTERNE link wilt gebruiken (bijv. Tally). Als je dit leeg laat, wordt het ingebouwde formulier gebruikt.',
+      hidden: ({parent}) => !parent?.acceptsRegistrations,
       validation: (Rule) =>
         Rule.uri({
           scheme: ['http', 'https'],
@@ -79,6 +92,7 @@ export default defineType({
       title: 'Maximum aantal deelnemers',
       type: 'number',
       description: 'Laat leeg als er geen maximum is',
+      hidden: ({parent}) => !parent?.acceptsRegistrations,
     }),
   ],
   preview: {

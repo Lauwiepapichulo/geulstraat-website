@@ -51,16 +51,13 @@ export default async function Footer() {
             <h3 className="text-xl font-bold mb-4 text-white">Navigatie</h3>
             <nav className="space-y-2">
               <Link href="/over-de-buurt" className="block text-slate-300 hover:text-white transition-colors duration-300">
-                Over de buurt
+                Historie
               </Link>
               <Link href="/nieuws" className="block text-slate-300 hover:text-white transition-colors duration-300">
                 Nieuws
               </Link>
               <Link href="/buurt-acties" className="block text-slate-300 hover:text-white transition-colors duration-300">
                 Buurt acties
-              </Link>
-              <Link href="/fotos" className="block text-slate-300 hover:text-white transition-colors duration-300">
-                Foto's
               </Link>
               <Link href="/over-ons" className="block text-slate-300 hover:text-white transition-colors duration-300">
                 Over ons

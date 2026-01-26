@@ -18,6 +18,7 @@ const upcomingActiesQuery = `*[_type == "buurtActie" && datetime > now()] | orde
   location,
   description,
   signupLink,
+  acceptsRegistrations,
   image {
     asset->,
     crop,
@@ -122,6 +123,7 @@ export default async function BuurtActiesPage() {
                     datetime={actie.datetime}
                     location={actie.location}
                     signupLink={actie.signupLink}
+                    acceptsRegistrations={actie.acceptsRegistrations !== false}
                     slug={actie.slug.current}
                   />
                 </div>
@@ -173,4 +175,4 @@ export default async function BuurtActiesPage() {
   )
 }
 
-export const revalidate = 60
+export const revalidate = 0

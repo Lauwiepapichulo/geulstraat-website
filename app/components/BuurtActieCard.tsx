@@ -13,6 +13,7 @@ interface BuurtActieCardProps {
   datetime: string
   location?: string
   signupLink?: string
+  acceptsRegistrations?: boolean
   slug: string
 }
 
@@ -24,17 +25,13 @@ export default function BuurtActieCard({
   datetime,
   location,
   signupLink,
+  acceptsRegistrations = true,
   slug
 }: BuurtActieCardProps) {
   const formattedDate = new Date(datetime).toLocaleDateString('nl-NL', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
-  })
-
-  const formattedTime = new Date(datetime).toLocaleTimeString('nl-NL', {
-    hour: '2-digit',
-    minute: '2-digit'
   })
 
   return (
@@ -72,7 +69,7 @@ export default function BuurtActieCard({
         <div className="flex flex-col gap-2 mb-3">
           <div className="flex items-center text-sm text-slate-500">
             <Calendar className="w-4 h-4 mr-2 text-[#1E3A5F]" />
-            <span className="font-medium">{formattedDate} • {formattedTime}</span>
+            <span className="font-medium">{formattedDate}</span>
           </div>
           {location && (
             <div className="flex items-center text-sm text-slate-500">
@@ -94,31 +91,23 @@ export default function BuurtActieCard({
           {description || ''}
         </p>
 
-        {/* Action buttons - always at bottom */}
-        <div className="flex flex-col sm:flex-row gap-3 mt-4 pt-4 border-t border-slate-100">
+        {/* Action button - always at bottom */}
+        <div className="mt-4 pt-4 border-t border-slate-100">
           {signupLink ? (
-            <>
-              <a
-                href={signupLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:shadow-lg min-h-[44px]"
-              >
-                Doe mee
-              </a>
-              <Link
-                href={`/buurt-acties/${slug}`}
-                className="flex-1 inline-flex items-center justify-center border-2 border-slate-200 hover:border-[#1E3A5F] text-slate-700 hover:text-[#1E3A5F] font-semibold px-6 py-3 rounded-full transition-all duration-300 min-h-[44px]"
-              >
-                Meer info
-              </Link>
-            </>
+            <a
+              href={signupLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:shadow-lg min-h-[44px]"
+            >
+              Doe mee
+            </a>
           ) : (
             <Link
               href={`/buurt-acties/${slug}`}
               className="w-full inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:shadow-lg min-h-[44px]"
             >
-              Meer informatie
+              {acceptsRegistrations ? 'Doe mee' : 'Meer informatie'}
             </Link>
           )}
         </div>

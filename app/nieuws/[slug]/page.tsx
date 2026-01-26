@@ -29,21 +29,37 @@ const postQuery = `*[_type == "post" && slug.current == $slug][0] {
 
 const portableTextComponents = {
   types: {
-    image: ({value}: any) => (
-      <div className="my-8">
-        <Image
-          src={value.asset.url}
-          alt={value.alt || 'Afbeelding'}
-          width={800}
-          height={600}
-          className="rounded-lg"
-          unoptimized
-        />
-        {value.caption && (
-          <p className="text-sm text-gray-600 mt-2 text-center">{value.caption}</p>
-        )}
-      </div>
-    ),
+    image: ({value}: any) => {
+      // Skip rendering if no valid image asset
+      if (!value?.asset) {
+        return null
+      }
+      
+      const imageUrl = urlFor(value).width(1200).fit('max').auto('format').url()
+      
+      // Double check we have a valid URL
+      if (!imageUrl) {
+        return null
+      }
+      
+      return (
+        <figure className="my-8">
+          <Image
+            src={imageUrl}
+            alt={value.alt || 'Afbeelding'}
+            width={800}
+            height={600}
+            className="rounded-lg w-full"
+            unoptimized
+          />
+          {value.caption && (
+            <figcaption className="text-sm text-slate-500 mt-3 text-center italic">
+              {value.caption}
+            </figcaption>
+          )}
+        </figure>
+      )
+    },
   },
   block: {
     h2: ({children}: any) => (
@@ -150,3 +166,5 @@ export async function generateStaticParams() {
     slug: post.slug.current,
   }))
 }
+
+export const revalidate = 0

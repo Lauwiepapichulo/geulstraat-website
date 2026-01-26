@@ -11,34 +11,37 @@ export default defineType({
       name: 'title',
       title: 'Titel',
       type: 'string',
-      description: 'De titel van het nieuwsbericht (bijvoorbeeld: "Buurtfeest op het plein")',
       validation: (Rule) => Rule.required().error('Een titel is verplicht'),
     }),
     defineField({
       name: 'slug',
       title: 'Webadres',
       type: 'slug',
-      description: 'Klik op "Generate" om automatisch een webadres te maken.',
+      description: 'Klik op "Generate"',
       options: {
         source: 'title',
         maxLength: 96,
+        slugify: input => input
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '')
+          .slice(0, 96),
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
-      validation: (Rule) => Rule.required().error('Klik op "Generate" om een webadres te maken'),
+      validation: (Rule) => Rule.required().error('Webadres is verplicht'),
     }),
     defineField({
       name: 'publishedAt',
-      title: 'Publicatiedatum',
+      title: 'Datum',
       type: 'datetime',
-      description: 'Wanneer moet dit bericht online verschijnen?',
       initialValue: () => new Date().toISOString(),
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'mainImage',
-      title: 'Hoofdfoto',
+      title: 'Banner foto (optioneel)',
       type: 'image',
-      description: 'De foto die bij het bericht hoort. Klik op de foto om het belangrijkste deel aan te wijzen (bijvoorbeeld een gezicht).',
+      description: 'Verschijnt bovenaan het artikel als grote banner.',
       options: {
         hotspot: true,
       },
@@ -46,24 +49,21 @@ export default defineType({
         {
           name: 'alt',
           type: 'string',
-          title: 'Beschrijving van de foto',
-          description: 'Kort beschrijven wat er op de foto te zien is. Dit helpt mensen met een visuele beperking.',
+          title: 'Beschrijving',
         },
       ],
     }),
     defineField({
       name: 'excerpt',
-      title: 'Korte samenvatting',
+      title: 'Samenvatting',
       type: 'text',
-      rows: 3,
-      description: 'Een korte tekst die op de voorpagina verschijnt (maximaal 2-3 zinnen)',
-      validation: (Rule) => Rule.max(200).warning('Probeer het kort te houden (maximaal 200 tekens)'),
+      rows: 2,
+      description: 'Korte tekst voor de nieuwspagina',
     }),
     defineField({
       name: 'body',
-      title: 'Inhoud',
+      title: 'Artikel inhoud',
       type: 'array',
-      description: 'De volledige tekst van het nieuwsbericht',
       of: [
         {
           type: 'block',
@@ -82,11 +82,28 @@ export default defineType({
               {title: 'Vetgedrukt', value: 'strong'},
               {title: 'Cursief', value: 'em'},
             ],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL',
+                    validation: (Rule: any) => Rule.uri({
+                      scheme: ['http', 'https', 'mailto', 'tel'],
+                    }),
+                  },
+                ],
+              },
+            ],
           },
         },
         {
           type: 'image',
-          title: 'Afbeelding',
+          title: 'Foto in artikel',
           options: {
             hotspot: true,
           },
@@ -94,7 +111,12 @@ export default defineType({
             {
               name: 'alt',
               type: 'string',
-              title: 'Beschrijving van de foto',
+              title: 'Beschrijving',
+            },
+            {
+              name: 'caption',
+              type: 'string',
+              title: 'Bijschrift',
             },
           ],
         },

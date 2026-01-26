@@ -81,3 +81,5 @@ export default async function NieuwsPage() {
     </div>
   )
 }
+
+export const revalidate = 0

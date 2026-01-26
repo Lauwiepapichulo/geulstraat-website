@@ -1,8 +1,9 @@
 import {notFound} from 'next/navigation'
 import Image from 'next/image'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
+import SignupForm from '@/app/components/SignupForm'
 import {client} from '@/lib/sanity.client'
-import {Calendar, MapPin, ExternalLink} from 'lucide-react'
+import {Calendar, MapPin, ExternalLink, Users} from 'lucide-react'
 import imageUrlBuilder from '@sanity/image-url'
 
 const builder = imageUrlBuilder(client)
@@ -18,13 +19,16 @@ const buurtActieQuery = `*[_type == "buurtActie" && slug.current == $slug][0] {
   datetime,
   location,
   description,
+  acceptsRegistrations,
   signupLink,
+  maxParticipants,
   image {
     asset->,
     crop,
     hotspot,
     alt
-  }
+  },
+  "registrationCount": count(*[_type == "registration" && buurtActie._ref == ^._id])
 }`
 
 export default async function BuurtActieDetailPage({
@@ -106,6 +110,18 @@ export default async function BuurtActieDetailPage({
               )}
             </div>
 
+            {/* Registration count */}
+            {buurtActie.acceptsRegistrations !== false && buurtActie.registrationCount > 0 && (
+              <div className="flex items-center text-lg text-slate-700 mt-4">
+                <Users className="h-6 w-6 mr-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
+                <span>
+                  {buurtActie.registrationCount} {buurtActie.registrationCount === 1 ? 'persoon' : 'personen'} ingeschreven
+                  {buurtActie.maxParticipants && ` (max ${buurtActie.maxParticipants})`}
+                </span>
+              </div>
+            )}
+
+            {/* External signup link */}
             {buurtActie.signupLink && !isPast && (
               <div className="mt-8">
                 <a
@@ -136,6 +152,25 @@ export default async function BuurtActieDetailPage({
               </p>
             </div>
           )}
+
+          {/* Signup Form - show by default unless acceptsRegistrations is explicitly false, no external link, and event is not past */}
+          {buurtActie.acceptsRegistrations !== false && !buurtActie.signupLink && !isPast && (
+            <div className="mt-12 pt-8 border-t border-slate-200">
+              <h2 className="text-3xl font-bold text-slate-900 mb-6">Doe mee!</h2>
+              {buurtActie.maxParticipants && buurtActie.registrationCount >= buurtActie.maxParticipants ? (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
+                  <p className="text-amber-800 font-semibold text-lg">
+                    Deze actie is helaas vol. Je kunt je niet meer inschrijven.
+                  </p>
+                </div>
+              ) : (
+                <SignupForm 
+                  buurtActieId={buurtActie._id} 
+                  buurtActieTitle={buurtActie.title} 
+                />
+              )}
+            </div>
+          )}
         </div>
       </article>
 
@@ -155,4 +190,4 @@ export async function generateStaticParams() {
   }))
 }
 
-export const revalidate = 60 // Revalidate every 60 seconds
+export const revalidate = 0

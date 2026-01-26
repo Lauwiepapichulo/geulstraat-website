@@ -2,7 +2,6 @@ import {client} from '@/lib/sanity.client'
 import imageUrlBuilder from '@sanity/image-url'
 import Breadcrumbs from '../components/Breadcrumbs'
 import ReadingProgress from '../components/ReadingProgress'
-import TableOfContents from '../components/TableOfContents'
 import {
   HeroSection,
   TextSection,
@@ -175,12 +174,6 @@ function generateSectionId(section: any, index: number): string {
   return `sectie-${index + 1}`
 }
 
-// Helper to get section title for TOC
-function getSectionTitle(section: any): string | null {
-  if (section._type === 'divider') return null
-  return section.title || section.sectionTitle || null
-}
-
 export default async function OverDeBuurtPage() {
   const pageData = await client.fetch(overDeBuurtQuery).catch(() => null)
 
@@ -202,19 +195,6 @@ export default async function OverDeBuurtPage() {
   // Check if there's a hero section as the first section
   const hasHeroFirst = pageData.sections?.[0]?._type === 'heroSection'
 
-  // Build TOC items from sections with titles
-  const tocItems = (pageData.sections || [])
-    .map((section: any, index: number) => {
-      const title = getSectionTitle(section)
-      if (!title) return null
-      return {
-        id: generateSectionId(section, index),
-        title,
-        type: section._type,
-      }
-    })
-    .filter(Boolean)
-
   // Track non-divider section index for alternating backgrounds
   let contentSectionIndex = 0
 
@@ -222,9 +202,6 @@ export default async function OverDeBuurtPage() {
     <div className="min-h-screen bg-[#FAFBFC]">
       {/* Reading Progress Indicator */}
       <ReadingProgress />
-      
-      {/* Table of Contents for navigation */}
-      <TableOfContents items={tocItems} />
 
       {/* Header - only show if no hero section first */}
       {!hasHeroFirst && (
@@ -247,9 +224,6 @@ export default async function OverDeBuurtPage() {
             {/* Decorative element */}
             <div className="mt-8 flex items-center gap-4">
               <span className="w-12 h-1 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
-              <span className="text-white/60 text-sm font-medium tracking-wide">
-                {tocItems.length} secties
-              </span>
             </div>
           </div>
         </div>
@@ -461,4 +435,4 @@ export default async function OverDeBuurtPage() {
   )
 }
 
-export const revalidate = 60
+export const revalidate = 0

@@ -121,4 +121,4 @@ export default async function OverOnsPage() {
   )
 }
 
-export const revalidate = 60
+export const revalidate = 0

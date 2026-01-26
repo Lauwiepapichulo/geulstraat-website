@@ -8,79 +8,99 @@ import {
   HomeIcon,
   DesktopIcon,
   CogIcon,
+  ClipboardIcon,
 } from '@sanity/icons'
 
 export const structure = (S: StructureBuilder) =>
   S.list()
-    .title('Content')
+    .title('🏘️ De Geulstraat')
     .items([
       // Homepage - banner instellingen
       S.listItem()
-        .title('Homepage')
+        .title('🏠 Homepage')
         .icon(DesktopIcon)
         .child(
           S.document()
             .schemaType('homepage')
             .documentId('homepage')
-            .title('Homepage')
+            .title('Homepage instellingen')
         ),
 
-      // Over de buurt
       S.listItem()
-        .title('Over de buurt')
+        .title('📖 Historie')
         .icon(HomeIcon)
         .child(
           S.document()
             .schemaType('overDeBuurt')
             .documentId('overDeBuurt')
-            .title('Over de buurt')
+            .title('Historie van de Geulstraat')
         ),
 
       S.divider(),
 
-      // Nieuws (posts)
+      // === CONTENT ===
       S.listItem()
-        .title('Laatste nieuws')
+        .title('📰 Nieuwsberichten')
         .icon(DocumentTextIcon)
         .child(
           S.documentTypeList('post')
             .title('Nieuwsberichten')
+            .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
         ),
 
-      // Buurt acties
+      // Buurt acties met inschrijvingen submenu
       S.listItem()
-        .title('Buurt acties')
+        .title('🎉 Buurt acties')
         .icon(CalendarIcon)
         .child(
-          S.documentTypeList('buurtActie')
+          S.list()
             .title('Buurt acties')
+            .items([
+              S.listItem()
+                .title('Alle buurt acties')
+                .icon(CalendarIcon)
+                .child(
+                  S.documentTypeList('buurtActie')
+                    .title('Buurt acties')
+                    .defaultOrdering([{field: 'datetime', direction: 'asc'}])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('📋 Inschrijvingen')
+                .icon(ClipboardIcon)
+                .child(
+                  S.documentTypeList('registration')
+                    .title('Alle inschrijvingen')
+                    .defaultOrdering([{field: 'registeredAt', direction: 'desc'}])
+                ),
+            ])
         ),
 
-      // Fotoalbums
       S.listItem()
-        .title('Fotoalbums')
+        .title('📸 Fotoalbums')
         .icon(ImagesIcon)
         .child(
           S.documentTypeList('gallery')
             .title('Fotoalbums')
+            .defaultOrdering([{field: 'date', direction: 'desc'}])
         ),
 
       S.divider(),
 
-      // Wie zijn wij
+      // === PAGINA'S ===
+
       S.listItem()
-        .title('Wie zijn wij')
+        .title('👥 Wie zijn wij')
         .icon(UsersIcon)
         .child(
           S.document()
             .schemaType('wieZijnWij')
             .documentId('wieZijnWij')
-            .title('Wie zijn wij')
+            .title('Over ons team')
         ),
 
-      // Vaste paginas
       S.listItem()
-        .title('Vaste pagina\'s')
+        .title('📄 Overige pagina\'s')
         .icon(DocumentIcon)
         .child(
           S.documentTypeList('page')
@@ -89,14 +109,14 @@ export const structure = (S: StructureBuilder) =>
 
       S.divider(),
 
-      // Site instellingen
+      // === INSTELLINGEN ===
       S.listItem()
-        .title('Site Instellingen')
+        .title('⚙️ Site Instellingen')
         .icon(CogIcon)
         .child(
           S.document()
             .schemaType('siteSettings')
             .documentId('siteSettings')
-            .title('Site Instellingen')
+            .title('Website instellingen')
         ),
     ])

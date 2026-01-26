@@ -7,9 +7,9 @@ export default defineType({
   type: 'document',
   icon: CogIcon,
   groups: [
-    {name: 'general', title: 'Algemeen', default: true},
-    {name: 'administrators', title: 'Beheerders'},
-    {name: 'contact', title: 'Contact'},
+    {name: 'general', title: '🏠 Algemeen', default: true},
+    {name: 'administrators', title: '👥 Beheerders'},
+    {name: 'contact', title: '📧 Contact'},
   ],
   fields: [
     // ========== ALGEMEEN ==========

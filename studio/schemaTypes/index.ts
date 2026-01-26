@@ -8,5 +8,6 @@ import siteSettings from './siteSettings'
 import navigation from './navigation'
 import homepage from './homepage'
 import wieZijnWij from './wieZijnWij'
+import registration from './registration'
 
-export const schemaTypes = [post, event, gallery, person, page, overDeBuurt, siteSettings, navigation, homepage, wieZijnWij]
+export const schemaTypes = [post, event, gallery, person, page, overDeBuurt, siteSettings, navigation, homepage, wieZijnWij, registration]
