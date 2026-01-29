@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-// Gebruik RECIPIENT_EMAIL op Vercel (bijv. info@geulstraatamsterdam.nl); lokaal fallback voor testen
-const RECIPIENT_EMAIL = process.env.RECIPIENT_EMAIL || 'laurensvduin@gmail.com'
+// Resend pas aanmaken bij request (niet bij build), anders faalt build op Vercel zonder RESEND_API_KEY
+function getResend() {
+  const key = process.env.RESEND_API_KEY
+  if (!key) return null
+  return new Resend(key)
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,10 +21,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const resend = getResend()
+    if (!resend) {
+      return NextResponse.json(
+        { error: 'E-mail is tijdelijk niet beschikbaar. Probeer het later opnieuw.' },
+        { status: 503 }
+      )
+    }
+
+    const recipient = process.env.RECIPIENT_EMAIL || 'laurensvduin@gmail.com'
+
     // E-mail versturen via Resend
     const { data, error } = await resend.emails.send({
       from: 'De Geulstraat Website <onboarding@resend.dev>',
-      to: [RECIPIENT_EMAIL],
+      to: [recipient],
       replyTo: email,
       subject: `[Contact] ${subject}`,
       html: `
