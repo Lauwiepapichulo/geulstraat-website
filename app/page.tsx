@@ -48,12 +48,12 @@ const overDeBuurtQuery = `*[_type == "overDeBuurt" && _id == "over-de-buurt-sing
 }`
 
 // Query for latest 3 news posts
-const latestNewsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
+const latestNewsQuery = `*[_type == "post" && isArchived != true] | order(publishedAt desc)[0...3] {
   _id,
   title,
   slug,
   publishedAt,
-  excerpt,
+  "bodyText": pt::text(body),
   mainImage {
     asset->,
     crop,
@@ -62,12 +62,13 @@ const latestNewsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
   }
 }`
 
-// Query for upcoming 3 buurt acties
-const upcomingActiesQuery = `*[_type == "buurtActie" && datetime > now()] | order(datetime asc)[0...3] {
+// Query for upcoming 3 buurt acties (TBD acties achteraan)
+const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true] | order(datumTBD desc, datetime asc)[0...3] {
   _id,
   title,
   slug,
   datetime,
+  datumTBD,
   location,
   description,
   signupLink,
@@ -89,6 +90,26 @@ function extractTextPreview(content: any[]): string {
     .map((child: any) => child.text)
   
   return textBlocks.join(' ').slice(0, 280) + (textBlocks.join(' ').length > 280 ? '...' : '')
+}
+
+// Helper functie om excerpt te genereren uit body tekst (eerste 2-3 zinnen)
+function generateExcerpt(bodyText: string | null, maxLength: number = 160): string {
+  if (!bodyText) return ''
+  
+  const sentences = bodyText.match(/[^.!?]+[.!?]+/g) || []
+  
+  let excerpt = ''
+  for (const sentence of sentences.slice(0, 3)) {
+    if ((excerpt + sentence).length > maxLength) break
+    excerpt += sentence
+  }
+  
+  if (!excerpt && bodyText) {
+    excerpt = bodyText.slice(0, maxLength)
+    if (bodyText.length > maxLength) excerpt += '...'
+  }
+  
+  return excerpt.trim()
 }
 
 export default async function Home() {
@@ -163,7 +184,7 @@ export default async function Home() {
                 <StaggerItem key={post._id}>
                   <NewsCard
                     title={post.title}
-                    excerpt={post.excerpt}
+                    excerpt={generateExcerpt(post.bodyText)}
                     imageUrl={post.mainImage?.asset ? urlFor(post.mainImage).width(800).fit('max').auto('format').url() : undefined}
                     imageAlt={post.mainImage?.alt || post.title}
                     publishedAt={post.publishedAt}
@@ -222,6 +243,7 @@ export default async function Home() {
                     imageUrl={actie.image?.asset ? urlFor(actie.image).width(800).fit('max').auto('format').url() : undefined}
                     imageAlt={actie.image?.alt || actie.title}
                     datetime={actie.datetime}
+                    datumTBD={actie.datumTBD}
                     location={actie.location}
                     signupLink={actie.signupLink}
                     slug={actie.slug.current}

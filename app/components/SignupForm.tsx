@@ -7,9 +7,10 @@ import { CheckCircle, Loader2, AlertCircle } from 'lucide-react'
 interface SignupFormProps {
   buurtActieId: string
   buurtActieTitle: string
+  buttonText?: string
 }
 
-export default function SignupForm({ buurtActieId, buurtActieTitle }: SignupFormProps) {
+export default function SignupForm({ buurtActieId, buurtActieTitle, buttonText = 'Ik doe mee' }: SignupFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -151,7 +152,7 @@ export default function SignupForm({ buurtActieId, buurtActieTitle }: SignupForm
             Bezig met inschrijven...
           </>
         ) : (
-          'Schrijf me in'
+          buttonText
         )}
       </button>
 

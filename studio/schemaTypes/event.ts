@@ -1,5 +1,8 @@
 import {defineField, defineType} from 'sanity'
 import {CalendarIcon} from '@sanity/icons'
+import {ActionsField} from '../components/ActionsField'
+import {BackButton} from '../components/BackButton'
+import {BannerPreview} from '../components/BannerPreview'
 
 export default defineType({
   name: 'buurtActie',
@@ -7,6 +10,15 @@ export default defineType({
   type: 'document',
   icon: CalendarIcon,
   fields: [
+    defineField({
+      name: 'backButton',
+      title: ' ',
+      type: 'string',
+      readOnly: true,
+      components: {
+        input: BackButton,
+      },
+    }),
     defineField({
       name: 'title',
       title: 'Naam van de buurtactie',
@@ -18,7 +30,7 @@ export default defineType({
       name: 'slug',
       title: 'Webadres',
       type: 'slug',
-      description: 'Wordt automatisch gegenereerd op basis van de naam.',
+      hidden: true, // Verborgen voor admin - wordt automatisch gegenereerd
       options: {
         source: 'title',
         maxLength: 96,
@@ -29,14 +41,33 @@ export default defineType({
           .slice(0, 96),
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
-      validation: (Rule) => Rule.required().error('Webadres is verplicht'),
+    }),
+    defineField({
+      name: 'isArchived',
+      title: '📦 Gearchiveerd',
+      type: 'boolean',
+      hidden: true, // Verborgen - gebruik de "Archiveren" knop in het menu
+      initialValue: false,
+    }),
+    defineField({
+      name: 'datumTBD',
+      title: 'Datum nog niet bekend',
+      type: 'boolean',
+      description: 'Vink aan als de datum nog niet bekend is (TBD)',
+      initialValue: false,
     }),
     defineField({
       name: 'datetime',
       title: 'Datum en tijd',
       type: 'datetime',
       description: 'Wanneer vindt de buurtactie plaats?',
-      validation: (Rule) => Rule.required().error('Datum en tijd zijn verplicht'),
+      hidden: ({parent}) => parent?.datumTBD === true,
+      validation: (Rule) => Rule.custom((value, context) => {
+        const parent = context.parent as any
+        if (parent?.datumTBD) return true // Geen datum nodig als TBD
+        if (!value) return 'Datum en tijd zijn verplicht (of vink "Datum nog niet bekend" aan)'
+        return true
+      }),
     }),
     defineField({
       name: 'location',
@@ -60,6 +91,9 @@ export default defineType({
       options: {
         hotspot: true,
       },
+      components: {
+        input: BannerPreview,
+      },
       validation: (Rule) => Rule.required().error('Een foto is verplicht voor de preview op de homepage'),
       fields: [
         {
@@ -71,7 +105,7 @@ export default defineType({
     }),
     defineField({
       name: 'acceptsRegistrations',
-      title: 'Inschrijving via website',
+      title: 'Inschrijf knop toevoegen',
       type: 'boolean',
       description: 'Schakel in om mensen zich te laten inschrijven via de website',
       initialValue: true,
@@ -93,6 +127,24 @@ export default defineType({
       type: 'number',
       description: 'Laat leeg als er geen maximum is',
       hidden: ({parent}) => !parent?.acceptsRegistrations,
+    }),
+    defineField({
+      name: 'signupButtonText',
+      title: 'Tekst op inschrijfknop',
+      type: 'string',
+      description: 'Standaard: "Ik doe mee"',
+      placeholder: 'Ik doe mee',
+      hidden: ({parent}) => !parent?.acceptsRegistrations,
+    }),
+    // Custom actions toolbar - onderaan het document
+    defineField({
+      name: 'actionsToolbar',
+      title: ' ',
+      type: 'string',
+      readOnly: true,
+      components: {
+        input: ActionsField,
+      },
     }),
   ],
   preview: {

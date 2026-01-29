@@ -3,6 +3,15 @@ img {
   max-height: 300px;
 }
 
+/* Artikel inhoud editor groter maken */
+.pt-editable {
+  min-height: 500px !important;
+}
+
+div[data-slate-editor="true"] {
+  min-height: 500px !important;
+}
+
 /* Verwijder witte achtergrond van afbeeldingen in portable text editor */
 [data-testid="pte-block-object"] {
   background: transparent !important;
@@ -97,4 +106,35 @@ button:has(span:contains("Published")) {
   background-color: #dcfce7 !important;
   border: 2px solid #16a34a !important;
   color: #166534 !important;
+}
+
+/* =============================================
+   TOGGLE SWITCHES - Blauw wanneer aan
+   ============================================= */
+
+/* Toggle switch - blauw wanneer aan */
+[data-ui="Switch"][aria-checked="true"] {
+  --card-bg-color: #2563eb !important;
+  --card-bg2-color: #2563eb !important;
+  background-color: #2563eb !important;
+}
+
+[data-ui="Switch"][aria-checked="true"] > span {
+  background-color: #2563eb !important;
+}
+
+/* Switch track achtergrond */
+[data-ui="Switch"] > span {
+  transition: background-color 0.2s ease !important;
+}
+
+/* Switch iets groter maken voor betere zichtbaarheid */
+[data-ui="Switch"] {
+  transform: scale(1.15) !important;
+  margin: 4px !important;
+}
+
+/* Boolean veld label vetgedrukt */
+[data-testid="boolean-input"] label {
+  font-weight: 600 !important;
 }

@@ -26,19 +26,77 @@ interface MediaSectionProps {
 }
 
 const bgClasses: Record<string, string> = {
+  // Wit en grijs
   white: 'bg-white',
   gray: 'bg-[#FAFBFC]',
+  darkgray: 'bg-slate-200',
+  slate: 'bg-slate-400',
+  
+  // Blauw
+  'blue-lightest': 'bg-sky-50',
+  'blue-soft': 'bg-sky-200',
+  'blue-medium': 'bg-sky-400',
+  'blue-dark': 'bg-[#1E3A5F]',
+  navy: 'bg-blue-900',
+  
+  // Groen
+  'green-lightest': 'bg-emerald-50',
+  'green-soft': 'bg-emerald-200',
+  'green-medium': 'bg-emerald-400',
+  'green-dark': 'bg-emerald-900',
+  teal: 'bg-teal-500',
+  
+  // Warm
+  beige: 'bg-amber-100',
+  sand: 'bg-amber-200',
+  cream: 'bg-amber-50',
+  terracotta: 'bg-orange-200',
+  peach: 'bg-red-100',
+  
+  // Roze/Paars
+  'pink-soft': 'bg-pink-100',
+  pink: 'bg-pink-300',
+  'purple-soft': 'bg-purple-100',
+  purple: 'bg-purple-400',
+  
+  // Donker
+  dark: 'bg-slate-800',
+  black: 'bg-slate-950',
+  
+  // Legacy
   emerald: 'bg-gradient-to-br from-[#1E3A5F]/[0.02] to-[#3B82A0]/[0.04]',
-  beige: 'bg-gradient-to-br from-amber-50/40 to-orange-50/30',
-  dark: 'bg-slate-900',
 }
 
 const textColorClasses: Record<string, string> = {
+  // Lichte achtergronden -> donkere tekst
   white: 'text-slate-800',
   gray: 'text-slate-800',
-  emerald: 'text-slate-800',
+  darkgray: 'text-slate-800',
+  slate: 'text-slate-900',
+  'blue-lightest': 'text-slate-800',
+  'blue-soft': 'text-slate-800',
+  'green-lightest': 'text-slate-800',
+  'green-soft': 'text-slate-800',
   beige: 'text-slate-800',
+  sand: 'text-slate-800',
+  cream: 'text-slate-800',
+  terracotta: 'text-slate-800',
+  peach: 'text-slate-800',
+  'pink-soft': 'text-slate-800',
+  pink: 'text-slate-800',
+  'purple-soft': 'text-slate-800',
+  emerald: 'text-slate-800',
+  
+  // Donkere achtergronden -> lichte tekst
+  'blue-medium': 'text-white',
+  'blue-dark': 'text-white',
+  navy: 'text-white',
+  'green-medium': 'text-white',
+  'green-dark': 'text-white',
+  teal: 'text-white',
+  purple: 'text-white',
   dark: 'text-white',
+  black: 'text-white',
 }
 
 const paddingClasses: Record<string, string> = {
@@ -79,7 +137,7 @@ export default function MediaSection({
   const bgClass = bgClasses[backgroundColor] || bgClasses.white
   const textColor = textColorClasses[backgroundColor] || textColorClasses.white
   const paddingClass = paddingClasses[padding] || paddingClasses.normal
-  const isDark = backgroundColor === 'dark'
+  const isDark = ['dark', 'black', 'blue-dark', 'blue-medium', 'navy', 'green-dark', 'green-medium', 'teal', 'purple'].includes(backgroundColor)
   const hasImage = !!imageUrl && typeof imageUrl === 'string' && imageUrl.length > 0 && imageUrl.startsWith('http')
   const isArticle = variant === 'article'
 
@@ -158,7 +216,7 @@ export default function MediaSection({
     return (
       <section ref={ref} id={id} className={`${bgClass} ${paddingClass}`}>
         <motion.div 
-          className={`max-w-3xl mx-auto px-6 sm:px-8 lg:px-12 text-${textAlign}`}
+          className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -168,7 +226,9 @@ export default function MediaSection({
               {title}
             </h2>
           )}
-          <PortableText value={content} components={portableTextComponents} />
+          <div className="max-w-3xl">
+            <PortableText value={content} components={portableTextComponents} />
+          </div>
           {button?.text && button?.url && (
             <Link href={button.url} className={`inline-block mt-10 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 ${buttonStyles[button.style || 'primary']}`}>
               {button.text}

@@ -3,12 +3,7 @@
 import { useState } from 'react'
 import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 
-interface ContactFormProps {
-  formspreeEndpoint?: string
-  recipientEmail?: string
-}
-
-export default function ContactForm({ formspreeEndpoint, recipientEmail }: ContactFormProps) {
+export default function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -20,29 +15,32 @@ export default function ContactForm({ formspreeEndpoint, recipientEmail }: Conta
     const form = e.currentTarget
     const formData = new FormData(form)
 
-    // If no Formspree endpoint, show configuration message
-    if (!formspreeEndpoint) {
-      setStatus('error')
-      setErrorMessage('Contactformulier is nog niet geconfigureerd. Voeg een Formspree endpoint toe in Sanity.')
-      return
+    // Converteer FormData naar JSON object
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      subject: formData.get('subject'),
+      message: formData.get('message'),
     }
 
     try {
-      const response = await fetch(formspreeEndpoint, {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        body: formData,
         headers: {
-          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(data),
       })
+
+      const result = await response.json()
 
       if (response.ok) {
         setStatus('success')
         form.reset()
       } else {
-        const data = await response.json()
         setStatus('error')
-        setErrorMessage(data.error || 'Er is iets misgegaan. Probeer het later opnieuw.')
+        setErrorMessage(result.error || 'Er is iets misgegaan. Probeer het later opnieuw.')
       }
     } catch (error) {
       setStatus('error')

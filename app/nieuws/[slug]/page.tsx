@@ -17,7 +17,6 @@ const postQuery = `*[_type == "post" && slug.current == $slug][0] {
   title,
   slug,
   publishedAt,
-  excerpt,
   mainImage {
     asset->,
     crop,
@@ -127,11 +126,6 @@ export default async function NewsDetailPage({
             <time dateTime={post.publishedAt}>{formattedDate}</time>
           </div>
 
-          {post.excerpt && (
-            <p className="text-xl text-gray-700 leading-relaxed">
-              {post.excerpt}
-            </p>
-          )}
         </header>
 
         {/* Main Image */}

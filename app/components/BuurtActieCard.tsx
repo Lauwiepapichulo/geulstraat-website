@@ -10,7 +10,8 @@ interface BuurtActieCardProps {
   description?: string
   imageUrl?: string
   imageAlt?: string
-  datetime: string
+  datetime?: string
+  datumTBD?: boolean
   location?: string
   signupLink?: string
   acceptsRegistrations?: boolean
@@ -23,16 +24,21 @@ export default function BuurtActieCard({
   imageUrl,
   imageAlt = "Buurt actie image",
   datetime,
+  datumTBD,
   location,
   signupLink,
   acceptsRegistrations = true,
   slug
 }: BuurtActieCardProps) {
-  const formattedDate = new Date(datetime).toLocaleDateString('nl-NL', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  })
+  const formattedDate = datumTBD 
+    ? 'Datum nog niet bekend' 
+    : datetime 
+      ? new Date(datetime).toLocaleDateString('nl-NL', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        })
+      : 'Datum nog niet bekend'
 
   return (
     <motion.div
@@ -71,10 +77,10 @@ export default function BuurtActieCard({
             <Calendar className="w-4 h-4 mr-2 text-[#1E3A5F]" />
             <span className="font-medium">{formattedDate}</span>
           </div>
-          {location && (
+          {(location || datumTBD) && (
             <div className="flex items-center text-sm text-slate-500">
               <MapPin className="w-4 h-4 mr-2 text-[#1E3A5F]" />
-              <span>{location}</span>
+              <span>{(!location || location.toLowerCase() === 'tbd') ? 'Locatie nog niet bekend' : location}</span>
             </div>
           )}
         </div>

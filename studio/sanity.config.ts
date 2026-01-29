@@ -4,6 +4,9 @@ import {media} from 'sanity-plugin-media'
 import {cloudinarySchemaPlugin, cloudinaryAssetSourcePlugin} from 'sanity-plugin-cloudinary'
 import {schemaTypes} from './schemaTypes'
 import {structure} from './structure'
+import {AutoSlugPublishAction} from './actions/autoSlugPublish'
+import {ArchiveAction} from './actions/archiveAction'
+import {DocumentActionsToolbar} from './components/DocumentActionsToolbar'
 import './sanity.css'
 
 const projectId = 'vs1rb6mu'
@@ -58,6 +61,44 @@ export default defineConfig({
     // Simplify the publish action text
     productionUrl: async (prev, context) => {
       return prev
+    },
+    // Custom document actions
+    actions: (prev, context) => {
+      // Document types that use our custom toolbar (hide default actions)
+      const customToolbarTypes = ['post', 'buurtActie']
+      // Document types that should auto-generate slugs
+      const slugTypes = ['post', 'buurtActie', 'gallery']
+      
+      let actions = prev
+      
+      // For types with custom toolbar, remove most default actions
+      // Keep only the ones we can't replicate (like history, etc)
+      if (customToolbarTypes.includes(context.schemaType)) {
+        // Filter out all standard actions - we have these in our toolbar
+        actions = actions.filter((action: any) => {
+          const actionsToRemove = ['publish', 'unpublish', 'delete', 'duplicate', 'discardChanges']
+          return !actionsToRemove.includes(action.action)
+        })
+        return actions
+      }
+      
+      // For other types, keep auto-slug functionality
+      if (slugTypes.includes(context.schemaType)) {
+        actions = actions.map((action) => {
+          if (action.action === 'publish') {
+            return (props: any) => {
+              const customAction = AutoSlugPublishAction(props)
+              if (customAction) {
+                return customAction
+              }
+              return action(props)
+            }
+          }
+          return action
+        })
+      }
+      
+      return actions
     },
   },
 })

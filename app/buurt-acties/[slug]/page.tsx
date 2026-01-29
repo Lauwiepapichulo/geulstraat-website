@@ -21,6 +21,7 @@ const buurtActieQuery = `*[_type == "buurtActie" && slug.current == $slug][0] {
   description,
   acceptsRegistrations,
   signupLink,
+  signupButtonText,
   maxParticipants,
   image {
     asset->,
@@ -166,7 +167,8 @@ export default async function BuurtActieDetailPage({
               ) : (
                 <SignupForm 
                   buurtActieId={buurtActie._id} 
-                  buurtActieTitle={buurtActie.title} 
+                  buurtActieTitle={buurtActie.title}
+                  buttonText={buurtActie.signupButtonText || 'Ik doe mee'}
                 />
               )}
             </div>

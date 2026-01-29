@@ -4,8 +4,7 @@ import ContactForm from '../components/ContactForm'
 import {Mail, MapPin} from 'lucide-react'
 
 const siteSettingsQuery = `*[_type == "siteSettings"][0] {
-  contactEmail,
-  formspreeEndpoint
+  contactEmail
 }`
 
 export const metadata = {
@@ -85,10 +84,7 @@ export default async function ContactPage() {
             Vul het formulier in en we nemen zo snel mogelijk contact met je op.
           </p>
           
-          <ContactForm 
-            formspreeEndpoint={siteSettings?.formspreeEndpoint}
-            recipientEmail={siteSettings?.contactEmail || 'info@geulstraatamsterdam.nl'}
-          />
+          <ContactForm />
         </div>
       </div>
     </div>

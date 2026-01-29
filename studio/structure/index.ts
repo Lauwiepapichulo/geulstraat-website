@@ -9,15 +9,17 @@ import {
   DesktopIcon,
   CogIcon,
   ClipboardIcon,
+  ArchiveIcon,
+  CheckmarkCircleIcon,
 } from '@sanity/icons'
 
 export const structure = (S: StructureBuilder) =>
   S.list()
-    .title('🏘️ De Geulstraat')
+    .title('De Geulstraat')
     .items([
       // Homepage - banner instellingen
       S.listItem()
-        .title('🏠 Homepage')
+        .title('Homepage')
         .icon(DesktopIcon)
         .child(
           S.document()
@@ -27,7 +29,7 @@ export const structure = (S: StructureBuilder) =>
         ),
 
       S.listItem()
-        .title('📖 Historie')
+        .title('Historie')
         .icon(HomeIcon)
         .child(
           S.document()
@@ -40,33 +42,80 @@ export const structure = (S: StructureBuilder) =>
 
       // === CONTENT ===
       S.listItem()
-        .title('📰 Nieuwsberichten')
+        .title('Nieuwsberichten')
         .icon(DocumentTextIcon)
         .child(
-          S.documentTypeList('post')
+          S.list()
             .title('Nieuwsberichten')
-            .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
+            .items([
+              S.listItem()
+                .title('Actieve berichten')
+                .icon(CheckmarkCircleIcon)
+                .child(
+                  S.documentTypeList('post')
+                    .title('Actieve nieuwsberichten')
+                    .filter('_type == "post" && (isArchived != true)')
+                    .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
+                ),
+              S.listItem()
+                .title('Archief')
+                .icon(ArchiveIcon)
+                .child(
+                  S.documentTypeList('post')
+                    .title('Gearchiveerde berichten')
+                    .filter('_type == "post" && isArchived == true')
+                    .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('Alle berichten')
+                .icon(DocumentTextIcon)
+                .child(
+                  S.documentTypeList('post')
+                    .title('Alle nieuwsberichten')
+                    .defaultOrdering([{field: 'publishedAt', direction: 'desc'}])
+                ),
+            ])
         ),
 
       // Buurt acties met inschrijvingen submenu
       S.listItem()
-        .title('🎉 Buurt acties')
+        .title('Buurt acties')
         .icon(CalendarIcon)
         .child(
           S.list()
             .title('Buurt acties')
             .items([
               S.listItem()
-                .title('Alle buurt acties')
+                .title('Actieve acties')
+                .icon(CheckmarkCircleIcon)
+                .child(
+                  S.documentTypeList('buurtActie')
+                    .title('Actieve buurt acties')
+                    .filter('_type == "buurtActie" && (isArchived != true)')
+                    .defaultOrdering([{field: 'datetime', direction: 'asc'}])
+                ),
+              S.listItem()
+                .title('Archief')
+                .icon(ArchiveIcon)
+                .child(
+                  S.documentTypeList('buurtActie')
+                    .title('Gearchiveerde acties')
+                    .filter('_type == "buurtActie" && isArchived == true')
+                    .defaultOrdering([{field: 'datetime', direction: 'desc'}])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('Alle acties')
                 .icon(CalendarIcon)
                 .child(
                   S.documentTypeList('buurtActie')
-                    .title('Buurt acties')
+                    .title('Alle buurt acties')
                     .defaultOrdering([{field: 'datetime', direction: 'asc'}])
                 ),
               S.divider(),
               S.listItem()
-                .title('📋 Inschrijvingen')
+                .title('Inschrijvingen')
                 .icon(ClipboardIcon)
                 .child(
                   S.documentTypeList('registration')
@@ -77,7 +126,7 @@ export const structure = (S: StructureBuilder) =>
         ),
 
       S.listItem()
-        .title('📸 Fotoalbums')
+        .title('Fotoalbums')
         .icon(ImagesIcon)
         .child(
           S.documentTypeList('gallery')
@@ -90,7 +139,7 @@ export const structure = (S: StructureBuilder) =>
       // === PAGINA'S ===
 
       S.listItem()
-        .title('👥 Wie zijn wij')
+        .title('Wie zijn wij')
         .icon(UsersIcon)
         .child(
           S.document()
@@ -100,7 +149,7 @@ export const structure = (S: StructureBuilder) =>
         ),
 
       S.listItem()
-        .title('📄 Overige pagina\'s')
+        .title('Overige pagina\'s')
         .icon(DocumentIcon)
         .child(
           S.documentTypeList('page')
@@ -111,7 +160,7 @@ export const structure = (S: StructureBuilder) =>
 
       // === INSTELLINGEN ===
       S.listItem()
-        .title('⚙️ Site Instellingen')
+        .title('Site Instellingen')
         .icon(CogIcon)
         .child(
           S.document()

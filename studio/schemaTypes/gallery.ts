@@ -18,13 +18,17 @@ export default defineType({
       name: 'slug',
       title: 'Webadres',
       type: 'slug',
-      description: 'Klik op "Generate" om automatisch een webadres te maken op basis van de naam.',
+      hidden: true, // Verborgen voor admin - wordt automatisch gegenereerd
       options: {
         source: 'title',
         maxLength: 96,
+        slugify: input => input
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '')
+          .slice(0, 96),
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
-      validation: (Rule) => Rule.required().error('Klik op "Generate" om een webadres te maken'),
     }),
     defineField({
       name: 'date',

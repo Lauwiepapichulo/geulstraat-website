@@ -10,11 +10,13 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const upcomingActiesQuery = `*[_type == "buurtActie" && datetime > now()] | order(datetime asc) {
+// Aankomende acties: met datum in de toekomst OF TBD (TBD achteraan)
+const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true] | order(datumTBD desc, datetime asc) {
   _id,
   title,
   slug,
   datetime,
+  datumTBD,
   location,
   description,
   signupLink,
@@ -27,11 +29,13 @@ const upcomingActiesQuery = `*[_type == "buurtActie" && datetime > now()] | orde
   }
 }`
 
-const pastActiesQuery = `*[_type == "buurtActie" && datetime < now()] | order(datetime desc)[0...10] {
+// Verleden acties: alleen met datum in het verleden (geen TBD)
+const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD != true && isArchived != true] | order(datetime desc)[0...10] {
   _id,
   title,
   slug,
   datetime,
+  datumTBD,
   location,
   description,
   image {
@@ -81,6 +85,19 @@ export default async function BuurtActiesPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               {upcomingActies.map((actie: any) => {
+                if (actie.datumTBD) {
+                  return (
+                    <a
+                      key={actie._id}
+                      href={`#actie-${actie._id}`}
+                      className="flex flex-col items-center justify-center bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 hover:border-slate-400 rounded-lg p-3 min-w-[80px] transition-all hover:scale-105"
+                    >
+                      <span className="text-lg font-bold text-slate-600">TBD</span>
+                      <span className="text-xs text-slate-500">datum volgt</span>
+                    </a>
+                  )
+                }
+                
                 const date = new Date(actie.datetime)
                 const day = date.toLocaleDateString('nl-NL', { day: '2-digit' })
                 const month = date.toLocaleDateString('nl-NL', { month: 'short' })
@@ -121,6 +138,7 @@ export default async function BuurtActiesPage() {
                     imageUrl={imageUrl}
                     imageAlt={actie.image?.alt}
                     datetime={actie.datetime}
+                    datumTBD={actie.datumTBD}
                     location={actie.location}
                     signupLink={actie.signupLink}
                     acceptsRegistrations={actie.acceptsRegistrations !== false}
@@ -162,6 +180,7 @@ export default async function BuurtActiesPage() {
                     imageUrl={imageUrl}
                     imageAlt={actie.image?.alt}
                     datetime={actie.datetime}
+                    datumTBD={actie.datumTBD}
                     location={actie.location}
                     slug={actie.slug.current}
                   />

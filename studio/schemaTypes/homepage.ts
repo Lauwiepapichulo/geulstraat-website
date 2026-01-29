@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {DesktopIcon} from '@sanity/icons'
+import {BannerPreview} from '../components/BannerPreview'
 
 export default defineType({
   name: 'homepage',
@@ -37,6 +38,9 @@ export default defineType({
       description: 'De grote foto bovenaan de homepage (gebruikt als slideshow uit staat)',
       options: {
         hotspot: true,
+      },
+      components: {
+        input: BannerPreview,
       },
       fields: [
         {

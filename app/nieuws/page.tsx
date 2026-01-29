@@ -9,12 +9,12 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
+const postsQuery = `*[_type == "post" && isArchived != true] | order(publishedAt desc) {
   _id,
   title,
   slug,
   publishedAt,
-  excerpt,
+  "bodyText": pt::text(body),
   mainImage {
     asset->,
     crop,
@@ -22,6 +22,28 @@ const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
     alt
   }
 }`
+
+// Helper functie om excerpt te genereren uit body tekst (eerste 2-3 zinnen)
+function generateExcerpt(bodyText: string | null, maxLength: number = 160): string {
+  if (!bodyText) return ''
+  
+  // Split op zinnen (. ! ?)
+  const sentences = bodyText.match(/[^.!?]+[.!?]+/g) || []
+  
+  let excerpt = ''
+  for (const sentence of sentences.slice(0, 3)) {
+    if ((excerpt + sentence).length > maxLength) break
+    excerpt += sentence
+  }
+  
+  // Fallback: als geen zinnen gevonden, neem eerste X karakters
+  if (!excerpt && bodyText) {
+    excerpt = bodyText.slice(0, maxLength)
+    if (bodyText.length > maxLength) excerpt += '...'
+  }
+  
+  return excerpt.trim()
+}
 
 export const metadata = {
   title: 'Nieuws - De Geulstraat',
@@ -61,7 +83,7 @@ export default async function NieuwsPage() {
                 <NewsCard
                   key={post._id}
                   title={post.title}
-                  excerpt={post.excerpt}
+                  excerpt={generateExcerpt(post.bodyText)}
                   imageUrl={imageUrl}
                   imageAlt={post.mainImage?.alt}
                   publishedAt={post.publishedAt}

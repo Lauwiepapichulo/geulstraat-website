@@ -1,5 +1,8 @@
 import {defineField, defineType} from 'sanity'
 import {DocumentTextIcon} from '@sanity/icons'
+import {ActionsField} from '../components/ActionsField'
+import {BackButton} from '../components/BackButton'
+import {BannerPreview} from '../components/BannerPreview'
 
 export default defineType({
   name: 'post',
@@ -7,6 +10,15 @@ export default defineType({
   type: 'document',
   icon: DocumentTextIcon,
   fields: [
+    defineField({
+      name: 'backButton',
+      title: ' ',
+      type: 'string',
+      readOnly: true,
+      components: {
+        input: BackButton,
+      },
+    }),
     defineField({
       name: 'title',
       title: 'Titel',
@@ -17,7 +29,7 @@ export default defineType({
       name: 'slug',
       title: 'Webadres',
       type: 'slug',
-      description: 'Klik op "Generate"',
+      hidden: true, // Verborgen voor admin - wordt automatisch gegenereerd
       options: {
         source: 'title',
         maxLength: 96,
@@ -28,7 +40,13 @@ export default defineType({
           .slice(0, 96),
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
-      validation: (Rule) => Rule.required().error('Webadres is verplicht'),
+    }),
+    defineField({
+      name: 'isArchived',
+      title: '📦 Gearchiveerd',
+      type: 'boolean',
+      hidden: true, // Verborgen - gebruik de "Archiveren" knop in het menu
+      initialValue: false,
     }),
     defineField({
       name: 'publishedAt',
@@ -45,6 +63,9 @@ export default defineType({
       options: {
         hotspot: true,
       },
+      components: {
+        input: BannerPreview,
+      },
       fields: [
         {
           name: 'alt',
@@ -52,13 +73,6 @@ export default defineType({
           title: 'Beschrijving',
         },
       ],
-    }),
-    defineField({
-      name: 'excerpt',
-      title: 'Samenvatting',
-      type: 'text',
-      rows: 2,
-      description: 'Korte tekst voor de nieuwspagina',
     }),
     defineField({
       name: 'body',
@@ -121,6 +135,16 @@ export default defineType({
           ],
         },
       ],
+    }),
+    // Custom actions toolbar - onderaan het document
+    defineField({
+      name: 'actionsToolbar',
+      title: ' ',
+      type: 'string',
+      readOnly: true,
+      components: {
+        input: ActionsField,
+      },
     }),
   ],
   preview: {

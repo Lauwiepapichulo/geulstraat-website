@@ -1,5 +1,7 @@
 import {defineField, defineType} from 'sanity'
 import {DocumentTextIcon, BlockElementIcon, ImageIcon, BlockquoteIcon, RocketIcon, ClockIcon, ThLargeIcon, ImagesIcon, TextIcon} from '@sanity/icons'
+import {BannerPreview} from '../components/BannerPreview'
+import {ColorPicker} from '../components/ColorPicker'
 
 // Shared styling fields for all sections
 const sharedStyleFields = [
@@ -8,15 +10,8 @@ const sharedStyleFields = [
     title: 'Achtergrondkleur',
     type: 'string',
     initialValue: 'white',
-    options: {
-      list: [
-        {title: 'Wit', value: 'white'},
-        {title: 'Lichtgrijs', value: 'gray'},
-        {title: 'Emerald (accent)', value: 'emerald'},
-        {title: 'Warm beige', value: 'beige'},
-        {title: 'Donker', value: 'dark'},
-      ],
-      layout: 'dropdown',
+    components: {
+      input: ColorPicker,
     },
   }),
   defineField({
@@ -159,6 +154,9 @@ export default defineType({
               title: 'Achtergrond afbeelding',
               type: 'image',
               options: {hotspot: true},
+              components: {
+                input: BannerPreview,
+              },
               validation: (Rule) => Rule.required(),
               fields: [
                 {name: 'alt', type: 'string', title: 'Alt tekst'},
