@@ -269,6 +269,38 @@ section {
   background-clip: text;
 }
 
+/* Google Translate - Hide all Google UI elements */
+.goog-te-banner-frame,
+.goog-te-menu-frame,
+.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-text-highlight {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+.goog-te-gadget {
+  display: none !important;
+}
+
+/* Remove Google's top bar spacing */
+html.translated-ltr body,
+html.translated-rtl body {
+  top: 0 !important;
+}
+
+/* Hide the Google Translate attribution */
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

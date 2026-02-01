@@ -6,7 +6,7 @@ import {useState, useEffect, useRef} from 'react'
 import {usePathname} from 'next/navigation'
 import {Menu, X} from 'lucide-react'
 import {motion, AnimatePresence, useScroll, useMotionValueEvent} from 'framer-motion'
-import {useLanguage} from '@/lib/LanguageContext'
+import GoogleTranslate from './GoogleTranslate'
 
 interface NavbarProps {
   logoUrl?: string
@@ -21,18 +21,17 @@ export default function Navbar({logoUrl, siteName = "Buurtplatform"}: NavbarProp
   const pathname = usePathname()
   const { scrollY } = useScroll()
   const lastScrollY = useRef(0)
-  const { language, setLanguage, t } = useLanguage()
   
   // Check if we're on the homepage (which has a dark hero)
   const isHomepage = pathname === '/'
 
   const navItems = [
-    {href: '/', label: t.nav.home},
-    {href: '/over-de-buurt', label: t.nav.overDeBuurt},
-    {href: '/nieuws', label: t.nav.nieuws},
-    {href: '/buurt-acties', label: t.nav.buurtActies},
-    {href: '/over-ons', label: t.nav.overOns},
-    {href: '/contact', label: t.nav.contact},
+    {href: '/', label: 'Home'},
+    {href: '/over-de-buurt', label: 'Historie'},
+    {href: '/nieuws', label: 'Nieuws'},
+    {href: '/buurt-acties', label: 'Buurt acties'},
+    {href: '/over-ons', label: 'Over ons'},
+    {href: '/contact', label: 'Contact'},
   ]
 
   const isActive = (href: string) => {
@@ -164,31 +163,8 @@ export default function Navbar({logoUrl, siteName = "Buurtplatform"}: NavbarProp
             ))}
             
             {/* Language Switcher */}
-            <div className="flex items-center ml-4 space-x-1">
-              <button
-                onClick={() => setLanguage('nl')}
-                className={`p-1.5 rounded-md transition-all duration-200 ${
-                  language === 'nl' 
-                    ? 'ring-2 ring-offset-1 ' + (isScrolled ? 'ring-[#1E3A5F]' : 'ring-white') 
-                    : 'opacity-60 hover:opacity-100'
-                }`}
-                aria-label="Nederlands"
-                title="Nederlands"
-              >
-                <span className="text-lg">🇳🇱</span>
-              </button>
-              <button
-                onClick={() => setLanguage('en')}
-                className={`p-1.5 rounded-md transition-all duration-200 ${
-                  language === 'en' 
-                    ? 'ring-2 ring-offset-1 ' + (isScrolled ? 'ring-[#1E3A5F]' : 'ring-white') 
-                    : 'opacity-60 hover:opacity-100'
-                }`}
-                aria-label="English"
-                title="English"
-              >
-                <span className="text-lg">🇬🇧</span>
-              </button>
+            <div className="ml-4">
+              <GoogleTranslate isScrolled={isScrolled} />
             </div>
           </div>
 
@@ -270,28 +246,7 @@ export default function Navbar({logoUrl, siteName = "Buurtplatform"}: NavbarProp
                   className="flex items-center space-x-2 px-4 pt-3 mt-2 border-t border-slate-200"
                 >
                   <span className="text-sm text-slate-500 mr-2">Taal:</span>
-                  <button
-                    onClick={() => setLanguage('nl')}
-                    className={`p-2 rounded-lg transition-all duration-200 ${
-                      language === 'nl' 
-                        ? 'bg-[#1E3A5F]/10 ring-2 ring-[#1E3A5F]' 
-                        : 'opacity-60 hover:opacity-100 hover:bg-slate-100'
-                    }`}
-                    aria-label="Nederlands"
-                  >
-                    <span className="text-xl">🇳🇱</span>
-                  </button>
-                  <button
-                    onClick={() => setLanguage('en')}
-                    className={`p-2 rounded-lg transition-all duration-200 ${
-                      language === 'en' 
-                        ? 'bg-[#1E3A5F]/10 ring-2 ring-[#1E3A5F]' 
-                        : 'opacity-60 hover:opacity-100 hover:bg-slate-100'
-                    }`}
-                    aria-label="English"
-                  >
-                    <span className="text-xl">🇬🇧</span>
-                  </button>
+                  <GoogleTranslate isScrolled={true} />
                 </motion.div>
               </div>
             </motion.div>

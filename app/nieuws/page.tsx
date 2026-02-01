@@ -55,7 +55,6 @@ export default async function NieuwsPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFBFC]">
-      {/* Header */}
       <div className="bg-gradient-to-br from-[#1E3A5F] via-[#2D5A87] to-[#152B47] pt-24 md:pt-28 pb-16 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumbs items={[
@@ -71,7 +70,6 @@ export default async function NieuwsPage() {
         </div>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {posts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -94,9 +92,7 @@ export default async function NieuwsPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
-            <p className="text-slate-600 text-lg">
-              Er zijn nog geen nieuwsberichten gepubliceerd.
-            </p>
+            <p className="text-slate-600 text-lg">Er zijn nog geen nieuwsberichten gepubliceerd.</p>
           </div>
         )}
       </div>

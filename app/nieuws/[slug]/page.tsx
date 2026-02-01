@@ -105,7 +105,7 @@ export default async function NewsDetailPage({
   const formattedDate = new Date(post.publishedAt).toLocaleDateString('nl-NL', {
     day: 'numeric',
     month: 'long',
-    year: 'numeric',
+    year: 'numeric'
   })
 
   return (
@@ -115,7 +115,6 @@ export default async function NewsDetailPage({
       />
 
       <article>
-        {/* Header */}
         <header className="mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {post.title}
@@ -125,10 +124,8 @@ export default async function NewsDetailPage({
             <Calendar className="h-5 w-5 mr-2" aria-hidden="true" />
             <time dateTime={post.publishedAt}>{formattedDate}</time>
           </div>
-
         </header>
 
-        {/* Main Image */}
         {post.mainImage?.asset && (
           <div className="relative w-full h-[400px] md:h-[500px] mb-8 rounded-lg overflow-hidden">
             <Image
@@ -142,7 +139,6 @@ export default async function NewsDetailPage({
           </div>
         )}
 
-        {/* Body Content */}
         <div className="prose prose-lg max-w-none">
           <PortableText value={post.body} components={portableTextComponents} />
         </div>

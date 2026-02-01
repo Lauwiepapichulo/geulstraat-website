@@ -10,7 +10,6 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-// Aankomende acties: met datum in de toekomst OF TBD (TBD achteraan)
 const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true] | order(datumTBD desc, datetime asc) {
   _id,
   title,
@@ -29,7 +28,6 @@ const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || dat
   }
 }`
 
-// Verleden acties: alleen met datum in het verleden (geen TBD)
 const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD != true && isArchived != true] | order(datetime desc)[0...10] {
   _id,
   title,
@@ -52,12 +50,13 @@ export const metadata = {
 }
 
 export default async function BuurtActiesPage() {
-  const upcomingActies = await client.fetch(upcomingActiesQuery).catch(() => [])
-  const pastActies = await client.fetch(pastActiesQuery).catch(() => [])
+  const [upcomingActies, pastActies] = await Promise.all([
+    client.fetch(upcomingActiesQuery).catch(() => []),
+    client.fetch(pastActiesQuery).catch(() => []),
+  ])
 
   return (
     <div className="min-h-screen bg-[#FAFBFC]">
-      {/* Header */}
       <div className="bg-gradient-to-br from-[#1E3A5F] via-[#2D5A87] to-[#152B47] pt-24 md:pt-28 pb-16 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumbs items={[
@@ -73,7 +72,6 @@ export default async function BuurtActiesPage() {
         </div>
       </div>
 
-      {/* Calendar View */}
       {upcomingActies.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-xl p-6 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
@@ -118,7 +116,6 @@ export default async function BuurtActiesPage() {
         </section>
       )}
 
-      {/* Upcoming Acties */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-8">
           Alle aankomende acties
@@ -150,14 +147,11 @@ export default async function BuurtActiesPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
-            <p className="text-slate-600 text-lg">
-              Er staan momenteel geen buurt acties gepland. Check later terug!
-            </p>
+            <p className="text-slate-600 text-lg">Er staan momenteel geen buurt acties gepland. Check later terug!</p>
           </div>
         )}
       </section>
 
-      {/* Past Acties Archive */}
       {pastActies.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">

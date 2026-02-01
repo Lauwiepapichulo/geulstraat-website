@@ -17,6 +17,7 @@ const buurtActieQuery = `*[_type == "buurtActie" && slug.current == $slug][0] {
   title,
   slug,
   datetime,
+  datumTBD,
   location,
   description,
   acceptsRegistrations,
@@ -44,23 +45,27 @@ export default async function BuurtActieDetailPage({
     notFound()
   }
 
-  const actieDate = new Date(buurtActie.datetime)
-  const formattedDate = actieDate.toLocaleDateString('nl-NL', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-  const formattedTime = actieDate.toLocaleTimeString('nl-NL', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const actieDate = buurtActie.datetime ? new Date(buurtActie.datetime) : null
+  const formattedDate = actieDate
+    ? actieDate.toLocaleDateString('nl-NL', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : null
+  const formattedTime = actieDate
+    ? actieDate.toLocaleTimeString('nl-NL', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : null
 
-  const isPast = actieDate < new Date()
+  const isPast = actieDate ? actieDate < new Date() : false
+  const datumTBD = buurtActie.datumTBD
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header with Image */}
       <div className="relative h-[400px] md:h-[500px]">
         {buurtActie.image ? (
           <Image
@@ -77,7 +82,6 @@ export default async function BuurtActieDetailPage({
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/50 to-transparent" />
       </div>
 
-      {/* Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
         <Breadcrumbs
           items={[
@@ -89,7 +93,6 @@ export default async function BuurtActieDetailPage({
         />
 
         <div className="bg-white rounded-xl p-8 md:p-12 shadow-xl">
-          {/* Header */}
           <header className="mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               {buurtActie.title}
@@ -99,7 +102,11 @@ export default async function BuurtActieDetailPage({
               <div className="flex items-center text-lg text-slate-700">
                 <Calendar className="h-6 w-6 mr-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                 <span>
-                  <strong>{formattedDate}</strong> om {formattedTime}
+                  {datumTBD
+                    ? 'Datum nog niet bekend'
+                    : formattedDate && formattedTime && (
+                        <><strong>{formattedDate}</strong> om {formattedTime}</>
+                      )}
                 </span>
               </div>
 
@@ -111,7 +118,6 @@ export default async function BuurtActieDetailPage({
               )}
             </div>
 
-            {/* Registration count */}
             {buurtActie.acceptsRegistrations !== false && buurtActie.registrationCount > 0 && (
               <div className="flex items-center text-lg text-slate-700 mt-4">
                 <Users className="h-6 w-6 mr-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
@@ -122,7 +128,6 @@ export default async function BuurtActieDetailPage({
               </div>
             )}
 
-            {/* External signup link */}
             {buurtActie.signupLink && !isPast && (
               <div className="mt-8">
                 <a
@@ -144,7 +149,6 @@ export default async function BuurtActieDetailPage({
             )}
           </header>
 
-          {/* Description */}
           {buurtActie.description && (
             <div className="prose prose-lg max-w-none">
               <h2 className="text-3xl font-bold text-slate-900 mb-4">Over deze actie</h2>
@@ -154,7 +158,6 @@ export default async function BuurtActieDetailPage({
             </div>
           )}
 
-          {/* Signup Form - show by default unless acceptsRegistrations is explicitly false, no external link, and event is not past */}
           {buurtActie.acceptsRegistrations !== false && !buurtActie.signupLink && !isPast && (
             <div className="mt-12 pt-8 border-t border-slate-200">
               <h2 className="text-3xl font-bold text-slate-900 mb-6">Doe mee!</h2>

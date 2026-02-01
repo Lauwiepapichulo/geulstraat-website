@@ -47,13 +47,14 @@ const overDeBuurtQuery = `*[_type == "overDeBuurt" && _id == "over-de-buurt-sing
   content[0...2]
 }`
 
-// Query for latest 3 news posts
 const latestNewsQuery = `*[_type == "post" && isArchived != true] | order(publishedAt desc)[0...3] {
   _id,
   title,
+  title_en,
   slug,
   publishedAt,
   "bodyText": pt::text(body),
+  "bodyText_en": pt::text(body_en),
   mainImage {
     asset->,
     crop,
@@ -62,15 +63,17 @@ const latestNewsQuery = `*[_type == "post" && isArchived != true] | order(publis
   }
 }`
 
-// Query for upcoming 3 buurt acties (TBD acties achteraan)
 const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true] | order(datumTBD desc, datetime asc)[0...3] {
   _id,
   title,
+  title_en,
   slug,
   datetime,
   datumTBD,
   location,
+  location_en,
   description,
+  description_en,
   signupLink,
   image {
     asset->,
@@ -113,11 +116,12 @@ function generateExcerpt(bodyText: string | null, maxLength: number = 160): stri
 }
 
 export default async function Home() {
-  // Fetch all data
-  const homepage = await client.fetch(homepageQuery).catch(() => null)
-  const overDeBuurt = await client.fetch(overDeBuurtQuery).catch(() => null)
-  const latestNews = await client.fetch(latestNewsQuery).catch(() => [])
-  const upcomingActies = await client.fetch(upcomingActiesQuery).catch(() => [])
+  const [homepage, overDeBuurt, latestNews, upcomingActies] = await Promise.all([
+    client.fetch(homepageQuery).catch(() => null),
+    client.fetch(overDeBuurtQuery).catch(() => null),
+    client.fetch(latestNewsQuery).catch(() => []),
+    client.fetch(upcomingActiesQuery).catch(() => []),
+  ])
 
   const previewText = homepage?.aboutSectionText 
     || (overDeBuurt?.content ? extractTextPreview(overDeBuurt.content) : null)
@@ -127,8 +131,8 @@ export default async function Home() {
     <div className="bg-[#FAFBFC]">
       {/* Hero Section */}
       <Hero
-        title={homepage?.heroTitle}
-        subtitle={homepage?.heroSubtitle}
+        title={homepage?.heroTitle || 'De fijnste straat van Amsterdam'}
+        subtitle={homepage?.heroSubtitle || 'Ontdek nieuws, buurt acties en meer in de Geulstraat'}
         imageUrl={homepage?.heroImage?.asset ? urlFor(homepage.heroImage).width(1600).quality(80).fit('max').auto('format').url() : undefined}
         imageAlt={homepage?.heroImage?.alt || "De Geulstraat"}
         enableSlideshow={homepage?.enableSlideshow === true}
@@ -180,18 +184,22 @@ export default async function Home() {
 
           {latestNews.length > 0 ? (
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestNews.map((post: any) => (
-                <StaggerItem key={post._id}>
-                  <NewsCard
-                    title={post.title}
-                    excerpt={generateExcerpt(post.bodyText)}
-                    imageUrl={post.mainImage?.asset ? urlFor(post.mainImage).width(800).fit('max').auto('format').url() : undefined}
-                    imageAlt={post.mainImage?.alt || post.title}
-                    publishedAt={post.publishedAt}
-                    slug={post.slug.current}
-                  />
-                </StaggerItem>
-              ))}
+              {latestNews.map((post: any) => {
+                const slug = post.slug?.current
+                if (!slug) return null
+                return (
+                  <StaggerItem key={post._id}>
+                    <NewsCard
+                      title={post.title}
+                      excerpt={generateExcerpt(post.bodyText)}
+                      imageUrl={post.mainImage?.asset ? urlFor(post.mainImage).width(800).fit('max').auto('format').url() : undefined}
+                      imageAlt={post.mainImage?.alt || post.title}
+                      publishedAt={post.publishedAt}
+                      slug={slug}
+                    />
+                  </StaggerItem>
+                )
+              })}
             </StaggerContainer>
           ) : (
             <FadeIn>
@@ -235,21 +243,25 @@ export default async function Home() {
 
           {upcomingActies.length > 0 ? (
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {upcomingActies.map((actie: any) => (
-                <StaggerItem key={actie._id}>
-                  <BuurtActieCard
-                    title={actie.title}
-                    description={actie.description}
-                    imageUrl={actie.image?.asset ? urlFor(actie.image).width(800).fit('max').auto('format').url() : undefined}
-                    imageAlt={actie.image?.alt || actie.title}
-                    datetime={actie.datetime}
-                    datumTBD={actie.datumTBD}
-                    location={actie.location}
-                    signupLink={actie.signupLink}
-                    slug={actie.slug.current}
-                  />
-                </StaggerItem>
-              ))}
+              {upcomingActies.map((actie: any) => {
+                const slug = actie.slug?.current
+                if (!slug) return null
+                return (
+                  <StaggerItem key={actie._id}>
+                    <BuurtActieCard
+                      title={actie.title}
+                      description={actie.description}
+                      imageUrl={actie.image?.asset ? urlFor(actie.image).width(800).fit('max').auto('format').url() : undefined}
+                      imageAlt={actie.image?.alt || actie.title}
+                      datetime={actie.datetime}
+                      datumTBD={actie.datumTBD}
+                      location={actie.location}
+                      signupLink={actie.signupLink}
+                      slug={slug}
+                    />
+                  </StaggerItem>
+                )
+              })}
             </StaggerContainer>
           ) : (
             <FadeIn>

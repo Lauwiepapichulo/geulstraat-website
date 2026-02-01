@@ -31,7 +31,7 @@ export default function BuurtActieCard({
   slug
 }: BuurtActieCardProps) {
   const formattedDate = datumTBD 
-    ? 'Datum nog niet bekend' 
+    ? 'Datum nog niet bekend'
     : datetime 
       ? new Date(datetime).toLocaleDateString('nl-NL', {
           day: 'numeric',
@@ -39,6 +39,7 @@ export default function BuurtActieCard({
           year: 'numeric'
         })
       : 'Datum nog niet bekend'
+  const locationLabel = (!location || location.toLowerCase() === 'tbd') ? 'Locatie nog niet bekend' : location
 
   return (
     <motion.div
@@ -80,7 +81,7 @@ export default function BuurtActieCard({
           {(location || datumTBD) && (
             <div className="flex items-center text-sm text-slate-500">
               <MapPin className="w-4 h-4 mr-2 text-[#1E3A5F]" />
-              <span>{(!location || location.toLowerCase() === 'tbd') ? 'Locatie nog niet bekend' : location}</span>
+              <span>{locationLabel}</span>
             </div>
           )}
         </div>
@@ -106,14 +107,14 @@ export default function BuurtActieCard({
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:shadow-lg min-h-[44px]"
             >
-              Doe mee
+              Aanmelden
             </a>
           ) : (
             <Link
               href={`/buurt-acties/${slug}`}
               className="w-full inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:shadow-lg min-h-[44px]"
             >
-              {acceptsRegistrations ? 'Doe mee' : 'Meer informatie'}
+              {acceptsRegistrations ? 'Aanmelden' : 'Meer informatie'}
             </Link>
           )}
         </div>
