@@ -113,8 +113,8 @@ export default async function RootLayout({
   const hasNavigation = navigation?.items && navigation.items.length > 0
 
   return (
-    <html lang="nl" className={`${inter.variable} ${merriweather.variable} ${nunito.variable}`}>
-      <body className="flex flex-col min-h-screen font-sans antialiased bg-[#FAFBFC]">
+    <html lang="nl" className={`${inter.variable} ${merriweather.variable} ${nunito.variable}`} suppressHydrationWarning>
+      <body className="flex flex-col min-h-screen font-sans antialiased bg-[#FAFBFC]" suppressHydrationWarning>
         <Providers>
           <Navbar 
             logoUrl={logoUrl}

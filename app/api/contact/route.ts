@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // E-mail versturen via Resend
     const { data, error } = await resend.emails.send({
-      from: 'De Geulstraat Website <onboarding@resend.dev>',
+      from: 'De Geulstraat <contact@geulstraatamsterdam.nl>',
       to: [recipient],
       replyTo: email,
       subject: `[Contact] ${subject}`,

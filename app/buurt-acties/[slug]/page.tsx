@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
 import SignupForm from '@/app/components/SignupForm'
 import {client} from '@/lib/sanity.client'
-import {Calendar, MapPin, ExternalLink, Users} from 'lucide-react'
+import {Calendar, MapPin, ExternalLink} from 'lucide-react'
 import imageUrlBuilder from '@sanity/image-url'
 
 const builder = imageUrlBuilder(client)
@@ -118,15 +118,7 @@ export default async function BuurtActieDetailPage({
               )}
             </div>
 
-            {buurtActie.acceptsRegistrations !== false && buurtActie.registrationCount > 0 && (
-              <div className="flex items-center text-lg text-slate-700 mt-4">
-                <Users className="h-6 w-6 mr-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
-                <span>
-                  {buurtActie.registrationCount} {buurtActie.registrationCount === 1 ? 'persoon' : 'personen'} ingeschreven
-                  {buurtActie.maxParticipants && ` (max ${buurtActie.maxParticipants})`}
-                </span>
-              </div>
-            )}
+{/* Registratie telling alleen zichtbaar in Sanity Studio admin */}
 
             {buurtActie.signupLink && !isPast && (
               <div className="mt-8">

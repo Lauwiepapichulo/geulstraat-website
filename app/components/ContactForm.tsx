@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 
 export default function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const formRef = useRef<HTMLFormElement>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -48,9 +49,12 @@ export default function ContactForm() {
     }
   }
 
-  if (status === 'success') {
-    return (
-      <div className="bg-[#1E3A5F]/10 rounded-xl p-8 md:p-12 text-center">
+  return (
+    <div translate="no" className="notranslate">
+      {/* Success message */}
+      <div 
+        className={`bg-[#1E3A5F]/10 rounded-xl p-8 md:p-12 text-center ${status === 'success' ? 'block' : 'hidden'}`}
+      >
         <CheckCircle className="w-16 h-16 text-[#1E3A5F] mx-auto mb-4" />
         <h3 className="text-2xl font-bold text-slate-800 mb-2">Bericht verzonden!</h3>
         <p className="text-slate-600 mb-6">
@@ -58,16 +62,19 @@ export default function ContactForm() {
         </p>
         <button
           onClick={() => setStatus('idle')}
+          type="button"
           className="inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300"
         >
           Nieuw bericht versturen
         </button>
       </div>
-    )
-  }
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Form */}
+      <form 
+        ref={formRef}
+        onSubmit={handleSubmit} 
+        className={`space-y-6 ${status === 'success' ? 'hidden' : 'block'}`}
+      >
       {/* Name field */}
       <div>
         <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
@@ -179,5 +186,6 @@ export default function ContactForm() {
         * Verplichte velden
       </p>
     </form>
+    </div>
   )
 }
