@@ -29,7 +29,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const recipient = process.env.RECIPIENT_EMAIL || 'laurensvduin@gmail.com'
+    // RECIPIENT_EMAIL moet in Vercel env vars staan
+    const recipient = process.env.RECIPIENT_EMAIL || 'info@geulstraatamsterdam.nl'
 
     // E-mail versturen via Resend
     const { data, error } = await resend.emails.send({
