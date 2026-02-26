@@ -6,7 +6,7 @@ import {BannerPreview} from '../components/BannerPreview'
 
 export default defineType({
   name: 'buurtActie',
-  title: 'Buurt acties',
+  title: 'Buurtacties',
   type: 'document',
   icon: CalendarIcon,
   fields: [
@@ -25,6 +25,12 @@ export default defineType({
       type: 'string',
       description: 'Bijvoorbeeld: "Buurtschoonmaak" of "Straatfeest Geulstraat"',
       validation: (Rule) => Rule.required().error('Een naam is verplicht'),
+    }),
+    defineField({
+      name: 'title_en',
+      title: 'Naam (Engels)',
+      type: 'string',
+      description: 'Optioneel. Vul in of gebruik "Vertalen naar Engels".',
     }),
     defineField({
       name: 'slug',
@@ -77,11 +83,24 @@ export default defineType({
       initialValue: 'Buurthuis',
     }),
     defineField({
+      name: 'location_en',
+      title: 'Locatie (Engels)',
+      type: 'string',
+      description: 'Optioneel. Voor Engelstalige bezoekers.',
+    }),
+    defineField({
       name: 'description',
       title: 'Beschrijving',
       type: 'text',
       rows: 4,
       description: 'Wat kunnen bezoekers verwachten? Wat moeten ze meenemen?',
+    }),
+    defineField({
+      name: 'description_en',
+      title: 'Beschrijving (Engels)',
+      type: 'text',
+      rows: 4,
+      description: 'Optioneel. Gebruik "Vertalen naar Engels" om automatisch te vullen.',
     }),
     defineField({
       name: 'image',
@@ -105,7 +124,7 @@ export default defineType({
     }),
     defineField({
       name: 'acceptsRegistrations',
-      title: 'Inschrijf knop toevoegen',
+      title: 'Inschrijfknop toevoegen',
       type: 'boolean',
       description: 'Schakel in om mensen zich te laten inschrijven via de website',
       initialValue: true,
@@ -134,6 +153,14 @@ export default defineType({
       type: 'string',
       description: 'Standaard: "Ik doe mee"',
       placeholder: 'Ik doe mee',
+      hidden: ({parent}) => !parent?.acceptsRegistrations,
+    }),
+    defineField({
+      name: 'signupButtonText_en',
+      title: 'Knoptekst (Engels)',
+      type: 'string',
+      description: 'Bijv. "Sign up"',
+      placeholder: 'Sign up',
       hidden: ({parent}) => !parent?.acceptsRegistrations,
     }),
     // Custom actions toolbar - onderaan het document

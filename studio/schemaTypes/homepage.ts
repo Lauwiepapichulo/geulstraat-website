@@ -144,7 +144,7 @@ export default defineType({
     }),
     defineField({
       name: 'aboutSectionButtonText',
-      title: '📖 Over de Geulstraat - Knop tekst',
+      title: '📖 Over de Geulstraat - Knoptekst',
       type: 'string',
       description: 'De tekst op de knop',
       initialValue: 'Lees meer over de Geulstraat',
@@ -166,17 +166,17 @@ export default defineType({
       initialValue: 'Blijf op de hoogte van wat er speelt in de Geulstraat',
     }),
 
-    // === BUURT ACTIES SECTIE ===
+    // === BUURTACTIES SECTIE ===
     defineField({
       name: 'actiesSectionTitle',
-      title: '🎉 Buurt acties - Titel',
+      title: '🎉 Buurtacties - Titel',
       type: 'string',
-      description: 'De titel boven de buurt acties',
-      initialValue: 'Buurt acties',
+      description: 'De titel boven de buurtacties',
+      initialValue: 'Buurtacties',
     }),
     defineField({
       name: 'actiesSectionSubtitle',
-      title: '🎉 Buurt acties - Ondertitel',
+      title: '🎉 Buurtacties - Ondertitel',
       type: 'string',
       description: 'De tekst onder de titel',
       initialValue: 'Doe mee aan activiteiten in de buurt',

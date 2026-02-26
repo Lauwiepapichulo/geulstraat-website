@@ -132,7 +132,7 @@ export default function ContactForm() {
         >
           <option value="">Selecteer een onderwerp</option>
           <option value="Vraag over de buurt">Vraag over de buurt</option>
-          <option value="Idee voor buurt actie">Idee voor buurt actie</option>
+          <option value="Idee voor buurtactie">Idee voor buurtactie</option>
           <option value="Probleem melden">Probleem melden</option>
           <option value="Meedoen als vrijwilliger">Meedoen als vrijwilliger</option>
           <option value="Website feedback">Website feedback</option>

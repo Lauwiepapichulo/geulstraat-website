@@ -34,10 +34,20 @@ export default function GoogleTranslate({ isScrolled = false }: GoogleTranslateP
 
   // Check current language from cookies/DOM
   const checkCurrentLanguage = useCallback(() => {
+    // Check DOM class (most reliable indicator)
     const hasGoogleClass = document.documentElement.classList.contains('translated-ltr')
-    const googtransCookie = document.cookie.split(';').find(c => c.trim().startsWith('googtrans='))
     
-    if (hasGoogleClass || (googtransCookie && googtransCookie.includes('/en'))) {
+    // Check for translated body class
+    const bodyTranslated = document.body.classList.contains('translated-ltr')
+    
+    // Check googtrans cookie
+    const googtransCookie = document.cookie.split(';').find(c => c.trim().startsWith('googtrans='))
+    const cookieHasEnglish = googtransCookie && googtransCookie.includes('/en')
+    
+    // Check if Google Translate frame exists and is active
+    const translateFrame = document.querySelector('.goog-te-banner-frame')
+    
+    if (hasGoogleClass || bodyTranslated || cookieHasEnglish) {
       setCurrentLang('en')
     } else {
       setCurrentLang('nl')
@@ -64,7 +74,25 @@ export default function GoogleTranslate({ isScrolled = false }: GoogleTranslateP
   }, [])
 
   useEffect(() => {
-    checkCurrentLanguage()
+    // Check if we came from a "reset to Dutch" action
+    const url = new URL(window.location.href)
+    const noTranslate = url.searchParams.has('_notranslate')
+    
+    if (noTranslate) {
+      // Remove the parameter from URL without reload
+      url.searchParams.delete('_notranslate')
+      window.history.replaceState({}, '', url.toString())
+      
+      // Force Dutch state
+      setCurrentLang('nl')
+      
+      // Clear any remaining cookies one more time
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname}`
+    } else {
+      checkCurrentLanguage()
+    }
     
     // If already loaded, just mark as ready
     if (window.google?.translate) {
@@ -155,13 +183,11 @@ export default function GoogleTranslate({ isScrolled = false }: GoogleTranslateP
       if (select) {
         select.value = 'en'
         select.dispatchEvent(new Event('change'))
-        // Update state after a short delay
         setTimeout(() => {
           checkCurrentLanguage()
           setIsLoading(false)
         }, 1000)
       } else {
-        // Fallback: try to reload with cookie
         document.cookie = 'googtrans=/nl/en; path=/'
         document.cookie = `googtrans=/nl/en; path=/; domain=.${window.location.hostname}`
         setIsLoading(false)
@@ -171,27 +197,36 @@ export default function GoogleTranslate({ isScrolled = false }: GoogleTranslateP
     
     // If switching to Dutch (restore original)
     if (lang === 'nl') {
-      // Clear the translation cookies
-      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname}`
+      // Clear ALL possible googtrans cookies on all domains
+      const hostname = window.location.hostname
+      const domainParts = hostname.split('.')
       
-      // Try to click the restore button in the Google Translate banner
-      const frame = document.querySelector('.goog-te-banner-frame') as HTMLIFrameElement
-      if (frame?.contentDocument) {
-        const restoreBtn = frame.contentDocument.querySelector('.goog-te-button button') as HTMLButtonElement
-        if (restoreBtn) {
-          restoreBtn.click()
-          setTimeout(() => {
-            checkCurrentLanguage()
-            setIsLoading(false)
-          }, 500)
-          return
-        }
+      // Build list of all possible cookie domains
+      const domains = ['', hostname, `.${hostname}`]
+      if (domainParts.length >= 2) {
+        const parentDomain = domainParts.slice(-2).join('.')
+        domains.push(parentDomain, `.${parentDomain}`)
+      }
+      if (domainParts.length >= 3) {
+        const grandparentDomain = domainParts.slice(-3).join('.')
+        domains.push(grandparentDomain, `.${grandparentDomain}`)
       }
       
-      // Fallback: reload the page
-      setIsLoading(false)
-      window.location.reload()
+      // Clear cookies on all domains and paths
+      domains.forEach(domain => {
+        const domainPart = domain ? `; domain=${domain}` : ''
+        document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/${domainPart}`
+        document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${window.location.pathname}${domainPart}`
+      })
+      
+      // Also try to remove via setting to empty/null values
+      document.cookie = 'googtrans=/nl/nl; path=/'
+      
+      // Force a clean reload by navigating to URL without any translation state
+      // Adding a timestamp parameter forces browser to fetch fresh content
+      const url = new URL(window.location.href)
+      url.searchParams.set('_notranslate', Date.now().toString())
+      window.location.href = url.toString()
     }
   }
 

@@ -18,7 +18,7 @@ async function updateHomepage() {
         aboutSectionButtonText: 'Lees meer over de Geulstraat',
         newsSectionTitle: 'Het laatste nieuws',
         newsSectionSubtitle: 'Blijf op de hoogte van wat er speelt in de Geulstraat',
-        actiesSectionTitle: 'Buurt acties',
+        actiesSectionTitle: 'Buurtacties',
         actiesSectionSubtitle: 'Doe mee aan activiteiten in de buurt',
       })
       .commit()

@@ -157,7 +157,7 @@ export default function SignupForm({ buurtActieId, buurtActieTitle, buttonText =
       </button>
 
       <p className="text-sm text-slate-500 text-center">
-        Door je in te schrijven ga je akkoord dat we je gegevens gebruiken om contact met je op te nemen over deze buurt actie.
+        Door je in te schrijven ga je akkoord dat we je gegevens gebruiken om contact met je op te nemen over deze buurtactie.
       </p>
     </form>
   )

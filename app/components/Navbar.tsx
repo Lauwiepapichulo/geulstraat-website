@@ -29,7 +29,7 @@ export default function Navbar({logoUrl, siteName = "Buurtplatform"}: NavbarProp
     {href: '/', label: 'Home'},
     {href: '/over-de-buurt', label: 'Historie'},
     {href: '/nieuws', label: 'Nieuws'},
-    {href: '/buurt-acties', label: 'Buurt acties'},
+    {href: '/buurt-acties', label: 'Buurtacties'},
     {href: '/over-ons', label: 'Over ons'},
     {href: '/contact', label: 'Contact'},
   ]

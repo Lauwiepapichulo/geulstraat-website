@@ -78,20 +78,20 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
 
-      // Buurt acties met inschrijvingen submenu
+      // Buurtacties met inschrijvingen submenu
       S.listItem()
-        .title('Buurt acties')
+        .title('Buurtacties')
         .icon(CalendarIcon)
         .child(
           S.list()
-            .title('Buurt acties')
+            .title('Buurtacties')
             .items([
               S.listItem()
                 .title('Actieve acties')
                 .icon(CheckmarkCircleIcon)
                 .child(
                   S.documentTypeList('buurtActie')
-                    .title('Actieve buurt acties')
+                    .title('Actieve buurtacties')
                     .filter('_type == "buurtActie" && (isArchived != true)')
                     .defaultOrdering([{field: 'datetime', direction: 'asc'}])
                 ),
@@ -110,7 +110,7 @@ export const structure = (S: StructureBuilder) =>
                 .icon(CalendarIcon)
                 .child(
                   S.documentTypeList('buurtActie')
-                    .title('Alle buurt acties')
+                    .title('Alle buurtacties')
                     .defaultOrdering([{field: 'datetime', direction: 'asc'}])
                 ),
               S.divider(),

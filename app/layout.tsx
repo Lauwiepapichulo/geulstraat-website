@@ -91,7 +91,7 @@ export async function generateMetadata(): Promise<Metadata> {
   
   return {
     title: siteSettings?.title || "De Geulstraat - Buurtplatform",
-    description: siteSettings?.description || "Het digitale platform voor de Geulstraat. Nieuws, buurt acties en meer.",
+    description: siteSettings?.description || "Het digitale platform voor de Geulstraat. Nieuws, buurtacties en meer.",
   }
 }
 

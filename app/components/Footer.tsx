@@ -42,7 +42,7 @@ export default async function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4 text-white">{siteSettings?.title || 'De Geulstraat'}</h3>
             <p className="text-slate-300 leading-relaxed">
-              Blijf op de hoogte van nieuws, buurt acties en activiteiten in de Geulstraat.
+              Blijf op de hoogte van nieuws, buurtacties en activiteiten in de Geulstraat.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export default async function Footer() {
                 Nieuws
               </Link>
               <Link href="/buurt-acties" className="block text-slate-300 hover:text-white transition-colors duration-300">
-                Buurt acties
+                Buurtacties
               </Link>
               <Link href="/over-ons" className="block text-slate-300 hover:text-white transition-colors duration-300">
                 Over ons

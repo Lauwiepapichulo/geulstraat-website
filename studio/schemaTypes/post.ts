@@ -26,6 +26,12 @@ export default defineType({
       validation: (Rule) => Rule.required().error('Een titel is verplicht'),
     }),
     defineField({
+      name: 'title_en',
+      title: 'Titel (Engels)',
+      type: 'string',
+      description: 'Optioneel. Vul in of gebruik "Vertalen naar Engels" om automatisch te laten vertalen.',
+    }),
+    defineField({
       name: 'slug',
       title: 'Webadres',
       type: 'slug',
@@ -132,6 +138,50 @@ export default defineType({
               type: 'string',
               title: 'Bijschrift',
             },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'body_en',
+      title: 'Artikel inhoud (Engels)',
+      type: 'array',
+      description: 'Optioneel. Gebruik "Vertalen naar Engels" om automatisch te vullen.',
+      of: [
+        {
+          type: 'block',
+          styles: [
+            {title: 'Normaal', value: 'normal'},
+            {title: 'Kop groot', value: 'h2'},
+            {title: 'Kop middel', value: 'h3'},
+            {title: 'Citaat', value: 'blockquote'},
+          ],
+          lists: [
+            {title: 'Opsomming', value: 'bullet'},
+            {title: 'Genummerd', value: 'number'},
+          ],
+          marks: {
+            decorators: [
+              {title: 'Vetgedrukt', value: 'strong'},
+              {title: 'Cursief', value: 'em'},
+            ],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [{name: 'href', type: 'url', title: 'URL'}],
+              },
+            ],
+          },
+        },
+        {
+          type: 'image',
+          title: 'Foto in artikel',
+          options: {hotspot: true},
+          fields: [
+            {name: 'alt', type: 'string', title: 'Beschrijving'},
+            {name: 'caption', type: 'string', title: 'Bijschrift'},
           ],
         },
       ],

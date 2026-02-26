@@ -45,8 +45,8 @@ const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD
 }`
 
 export const metadata = {
-  title: 'Buurt acties - De Geulstraat',
-  description: 'Bekijk alle aankomende buurt acties en activiteiten in de Geulstraat',
+  title: 'Buurtacties - De Geulstraat',
+  description: 'Bekijk alle aankomende buurtacties en activiteiten in de Geulstraat',
 }
 
 export default async function BuurtActiesPage() {
@@ -61,10 +61,10 @@ export default async function BuurtActiesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumbs items={[
             {label: 'Home', href: '/'},
-            {label: 'Buurt acties', href: '/buurt-acties'},
+            {label: 'Buurtacties', href: '/buurt-acties'},
           ]} />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-6 mb-4">
-            Buurt acties
+            Buurtacties
           </h1>
           <p className="text-xl text-white/90 max-w-2xl">
             Doe mee aan activiteiten in de Geulstraat en ontmoet je buren
@@ -147,7 +147,7 @@ export default async function BuurtActiesPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
-            <p className="text-slate-600 text-lg">Er staan momenteel geen buurt acties gepland. Check later terug!</p>
+            <p className="text-slate-600 text-lg">Er staan momenteel geen buurtacties gepland. Check later terug!</p>
           </div>
         )}
       </section>
@@ -159,7 +159,7 @@ export default async function BuurtActiesPage() {
           </h2>
           <details className="bg-white rounded-xl p-6 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
             <summary className="cursor-pointer font-semibold text-lg text-slate-900 hover:text-[#1E3A5F] transition-colors">
-              Bekijk eerdere buurt acties ({pastActies.length})
+              Bekijk eerdere buurtacties ({pastActies.length})
             </summary>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pastActies.map((actie: any) => {

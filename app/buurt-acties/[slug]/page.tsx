@@ -86,7 +86,7 @@ export default async function BuurtActieDetailPage({
         <Breadcrumbs
           items={[
             {label: 'Home', href: '/'},
-            {label: 'Buurt acties', href: '/buurt-acties'},
+            {label: 'Buurtacties', href: '/buurt-acties'},
             {label: buurtActie.title, href: `/buurt-acties/${slug}`}
           ]}
           className="mb-6"
@@ -128,7 +128,7 @@ export default async function BuurtActieDetailPage({
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-105 text-lg min-h-[56px]"
                 >
-                  Doe mee met deze buurt actie
+                  Doe mee met deze buurtactie
                   <ExternalLink className="ml-2 h-6 w-6" aria-hidden="true" />
                 </a>
               </div>

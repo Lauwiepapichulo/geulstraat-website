@@ -132,7 +132,7 @@ export default async function Home() {
       {/* Hero Section */}
       <Hero
         title={homepage?.heroTitle || 'De fijnste straat van Amsterdam'}
-        subtitle={homepage?.heroSubtitle || 'Ontdek nieuws, buurt acties en meer in de Geulstraat'}
+        subtitle={homepage?.heroSubtitle || 'Ontdek nieuws, buurtacties en meer in de Geulstraat'}
         imageUrl={homepage?.heroImage?.asset ? urlFor(homepage.heroImage).width(1600).quality(80).fit('max').auto('format').url() : undefined}
         imageAlt={homepage?.heroImage?.alt || "De Geulstraat"}
         enableSlideshow={homepage?.enableSlideshow === true}
@@ -227,13 +227,13 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Buurt Acties Section */}
+      {/* Buurtacties Section */}
       <section className="py-20 bg-[#FAFBFC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <div className="mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-                {homepage?.actiesSectionTitle || 'Buurt acties'}
+                {homepage?.actiesSectionTitle || 'Buurtacties'}
               </h2>
               <p className="text-lg text-slate-500">
                 {homepage?.actiesSectionSubtitle || 'Doe mee aan activiteiten in de buurt'}
@@ -267,7 +267,7 @@ export default async function Home() {
             <FadeIn>
               <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
                 <p className="text-slate-500 text-lg">
-                  Er zijn momenteel geen geplande buurt acties. Check later terug!
+                  Er zijn momenteel geen geplande buurtacties. Check later terug!
                 </p>
               </div>
             </FadeIn>
@@ -279,7 +279,7 @@ export default async function Home() {
                 href="/buurt-acties"
                 className="inline-flex items-center text-[#1E3A5F] hover:text-[#152B47] font-semibold text-lg group"
               >
-                Bekijk alle buurt acties
+                Bekijk alle buurtacties
                 <svg className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

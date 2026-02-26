@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!name || !email || !buurtActieId) {
       return NextResponse.json(
-        { error: 'Naam, email en buurt actie zijn verplicht' },
+        { error: 'Naam, e-mail en buurtactie zijn verplicht' },
         { status: 400 }
       )
     }
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     if (existingRegistration) {
       return NextResponse.json(
-        { error: 'Je bent al ingeschreven voor deze buurt actie' },
+        { error: 'Je bent al ingeschreven voor deze buurtactie' },
         { status: 400 }
       )
     }

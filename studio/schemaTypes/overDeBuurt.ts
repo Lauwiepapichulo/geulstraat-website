@@ -58,7 +58,7 @@ const buttonField = defineField({
   fields: [
     defineField({
       name: 'text',
-      title: 'Knop tekst',
+      title: 'Knoptekst',
       type: 'string',
     }),
     defineField({

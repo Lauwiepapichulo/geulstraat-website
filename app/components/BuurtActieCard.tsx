@@ -22,7 +22,7 @@ export default function BuurtActieCard({
   title,
   description,
   imageUrl,
-  imageAlt = "Buurt actie image",
+  imageAlt = "Buurtactie image",
   datetime,
   datumTBD,
   location,
@@ -55,7 +55,7 @@ export default function BuurtActieCard({
         {imageUrl ? (
           <Image
             src={imageUrl}
-            alt={imageAlt || title || "Buurt actie afbeelding"}
+            alt={imageAlt || title || "Buurtactie afbeelding"}
             fill
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

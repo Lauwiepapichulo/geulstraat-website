@@ -36,7 +36,7 @@ export default defineType({
     }),
     defineField({
       name: 'buurtActie',
-      title: 'Buurt actie',
+      title: 'Buurtactie',
       type: 'reference',
       to: [{type: 'buurtActie'}],
       validation: (Rule) => Rule.required(),
