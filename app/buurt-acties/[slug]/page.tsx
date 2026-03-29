@@ -179,12 +179,14 @@ export default async function BuurtActieDetailPage({
 
 export async function generateStaticParams() {
   const acties = await client
-    .fetch(`*[_type == "buurtActie"] { slug }`)
+    .fetch(`*[_type == "buurtActie" && defined(slug.current)] { slug }`)
     .catch(() => [])
 
-  return acties.map((actie: any) => ({
-    slug: actie.slug.current,
-  }))
+  return acties
+    .filter((actie: any) => actie.slug?.current)
+    .map((actie: any) => ({
+      slug: actie.slug.current,
+    }))
 }
 
 export const revalidate = 0

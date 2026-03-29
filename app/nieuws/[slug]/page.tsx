@@ -149,12 +149,14 @@ export default async function NewsDetailPage({
 
 export async function generateStaticParams() {
   const posts = await client
-    .fetch(`*[_type == "post"] { slug }`)
+    .fetch(`*[_type == "post" && defined(slug.current)] { slug }`)
     .catch(() => [])
 
-  return posts.map((post: any) => ({
-    slug: post.slug.current,
-  }))
+  return posts
+    .filter((post: any) => post.slug?.current)
+    .map((post: any) => ({
+      slug: post.slug.current,
+    }))
 }
 
 export const revalidate = 0
