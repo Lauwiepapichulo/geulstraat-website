@@ -33,9 +33,9 @@ export default defineType({
     }),
     defineField({
       name: 'slug',
-      title: 'Webadres',
+      title: 'Webadres (URL)',
       type: 'slug',
-      hidden: true, // Verborgen voor admin - wordt automatisch gegenereerd
+      description: 'Wordt automatisch aangemaakt. Klik op "Generate" als er nog niets staat.',
       options: {
         source: 'title',
         maxLength: 96,
@@ -46,6 +46,7 @@ export default defineType({
           .slice(0, 96),
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
+      validation: (Rule) => Rule.required().error('Een webadres is verplicht. Klik op de "Generate" knop.'),
     }),
     defineField({
       name: 'isArchived',
