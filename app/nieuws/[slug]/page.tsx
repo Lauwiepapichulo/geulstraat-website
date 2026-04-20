@@ -3,7 +3,7 @@ import Image from 'next/image'
 import {PortableText} from '@portabletext/react'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
 import {client} from '@/lib/sanity.client'
-import {Calendar} from 'lucide-react'
+import {Calendar, FileDown} from 'lucide-react'
 import imageUrlBuilder from '@sanity/image-url'
 
 const builder = imageUrlBuilder(client)
@@ -23,7 +23,14 @@ const postQuery = `*[_type == "post" && slug.current == $slug][0] {
     hotspot,
     alt
   },
-  body
+  body,
+  attachment {
+    asset-> {
+      url,
+      originalFilename
+    },
+    description
+  }
 }`
 
 const portableTextComponents = {
@@ -142,6 +149,22 @@ export default async function NewsDetailPage({
         <div className="prose prose-lg max-w-none">
           <PortableText value={post.body} components={portableTextComponents} />
         </div>
+
+        {post.attachment?.asset?.url && (
+          <div className="mt-8 p-6 bg-slate-50 rounded-lg border border-slate-200">
+            <a
+              href={post.attachment.asset.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 text-primary hover:text-primary/80 transition-colors"
+            >
+              <FileDown className="h-6 w-6 flex-shrink-0" />
+              <span className="font-medium">
+                {post.attachment.description || post.attachment.asset.originalFilename || 'Download bijlage'}
+              </span>
+            </a>
+          </div>
+        )}
       </article>
     </div>
   )

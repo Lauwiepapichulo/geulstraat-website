@@ -143,6 +143,23 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'attachment',
+      title: 'Bijlage (PDF/Document)',
+      type: 'file',
+      description: 'Upload hier een PDF of ander document, bijvoorbeeld een nieuwsbrief.',
+      options: {
+        accept: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx'
+      },
+      fields: [
+        {
+          name: 'description',
+          type: 'string',
+          title: 'Beschrijving bijlage',
+          description: 'Bijv. "Download de nieuwsbrief" of "Bekijk het volledige document"',
+        },
+      ],
+    }),
+    defineField({
       name: 'body_en',
       title: 'Artikel inhoud (Engels)',
       type: 'array',
