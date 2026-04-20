@@ -47,7 +47,7 @@ const overDeBuurtQuery = `*[_type == "overDeBuurt" && _id == "over-de-buurt-sing
   content[0...2]
 }`
 
-const latestNewsQuery = `*[_type == "post" && isArchived != true] | order(publishedAt desc)[0...3] {
+const latestNewsQuery = `*[_type == "post" && isArchived != true && defined(slug.current) && defined(title)] | order(publishedAt desc)[0...3] {
   _id,
   title,
   title_en,

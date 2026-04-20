@@ -9,7 +9,7 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const postsQuery = `*[_type == "post" && isArchived != true] | order(publishedAt desc) {
+const postsQuery = `*[_type == "post" && isArchived != true && defined(slug.current) && defined(title)] | order(publishedAt desc) {
   _id,
   title,
   slug,
@@ -73,22 +73,24 @@ export default async function NieuwsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {posts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post: any) => {
-              const imageUrl = post.mainImage?.asset 
-                ? urlFor(post.mainImage).width(800).fit('max').auto('format').url()
-                : undefined
-              return (
-                <NewsCard
-                  key={post._id}
-                  title={post.title}
-                  excerpt={generateExcerpt(post.bodyText)}
-                  imageUrl={imageUrl}
-                  imageAlt={post.mainImage?.alt}
-                  publishedAt={post.publishedAt}
-                  slug={post.slug.current}
-                />
-              )
-            })}
+            {posts
+              .filter((post: any) => post?.slug?.current && post?.title)
+              .map((post: any) => {
+                const imageUrl = post.mainImage?.asset
+                  ? urlFor(post.mainImage).width(800).fit('max').auto('format').url()
+                  : undefined
+                return (
+                  <NewsCard
+                    key={post._id}
+                    title={post.title}
+                    excerpt={generateExcerpt(post.bodyText)}
+                    imageUrl={imageUrl}
+                    imageAlt={post.mainImage?.alt}
+                    publishedAt={post.publishedAt}
+                    slug={post.slug.current}
+                  />
+                )
+              })}
           </div>
         ) : (
           <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
