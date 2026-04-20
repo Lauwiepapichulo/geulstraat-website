@@ -21,9 +21,38 @@ export function DocumentActionsToolbar({documentId, schemaType}: Props) {
   const handlePublish = useCallback(async () => {
     if (publish.disabled) return
     setIsProcessing('publish')
+
+    const hasTitle = !!doc?.title
+    const hasSlug = !!doc?.slug?.current
+
+    if (hasTitle && !hasSlug) {
+      const slugified = String(doc.title)
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+        .slice(0, 96)
+
+      patch.execute([
+        {
+          set: {
+            slug: {
+              _type: 'slug',
+              current: slugified,
+            },
+          },
+        },
+      ])
+
+      setTimeout(() => {
+        publish.execute()
+        setTimeout(() => setIsProcessing(null), 500)
+      }, 150)
+      return
+    }
+
     publish.execute()
     setTimeout(() => setIsProcessing(null), 500)
-  }, [publish])
+  }, [publish, patch, doc])
 
   const handleDiscard = useCallback(async () => {
     if (discardChanges.disabled) return
