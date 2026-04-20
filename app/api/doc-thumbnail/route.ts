@@ -3,8 +3,9 @@ import {
   detectExt,
   isSanityCdnUrl,
   renderPdfThumbnail,
-  renderDocPlaceholderPng,
-  renderDocPlaceholderSvg,
+  renderDocPagePreviewPng,
+  extractDocxFirstImage,
+  extractExcerpt,
 } from '@/lib/doc-preview'
 
 export const runtime = 'nodejs'
@@ -31,37 +32,34 @@ export async function GET(request: NextRequest) {
   const ext = detectExt(url, filename)
 
   if (ext === 'pdf') {
-    const png = await renderPdfThumbnail(url, 800)
+    const png = await renderPdfThumbnail(url, 1200)
     if (png) {
       return new Response(new Uint8Array(png), {
         status: 200,
-        headers: {
-          ...CACHE_HEADERS,
-          'Content-Type': 'image/png',
-        },
+        headers: {...CACHE_HEADERS, 'Content-Type': 'image/png'},
+      })
+    }
+  }
+
+  if (ext === 'docx') {
+    const embedded = await extractDocxFirstImage(url)
+    if (embedded) {
+      return new Response(new Uint8Array(embedded), {
+        status: 200,
+        headers: {...CACHE_HEADERS, 'Content-Type': 'image/png'},
       })
     }
   }
 
   if (ext === 'docx' || ext === 'doc' || ext === 'pdf') {
-    const png = await renderDocPlaceholderPng(title, ext)
+    const bodyText = await extractExcerpt(url, ext, 800)
+    const png = await renderDocPagePreviewPng(title, bodyText, ext)
     if (png) {
       return new Response(new Uint8Array(png), {
         status: 200,
-        headers: {
-          ...CACHE_HEADERS,
-          'Content-Type': 'image/png',
-        },
+        headers: {...CACHE_HEADERS, 'Content-Type': 'image/png'},
       })
     }
-    const svg = renderDocPlaceholderSvg(title, ext)
-    return new Response(svg, {
-      status: 200,
-      headers: {
-        ...CACHE_HEADERS,
-        'Content-Type': 'image/svg+xml',
-      },
-    })
   }
 
   return new Response('Unsupported file type', {status: 415})

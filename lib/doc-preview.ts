@@ -134,103 +134,182 @@ export async function renderPdfThumbnail(url: string, width = 800): Promise<Buff
   }
 }
 
-function escapeXml(text: string): string {
+export async function extractDocxFirstImage(url: string): Promise<Buffer | null> {
+  try {
+    if (!isSanityCdnUrl(url)) return null
+    const bytes = await fetchBytes(url)
+    const mammoth = await import('mammoth')
+    let firstImage: {buffer: Buffer; contentType: string} | null = null
+    await mammoth.convertToHtml(
+      {buffer: Buffer.from(bytes)},
+      {
+        convertImage: (mammoth as any).images.imgElement(async (image: any) => {
+          if (!firstImage) {
+            const buf = await image.read()
+            firstImage = {
+              buffer: Buffer.isBuffer(buf) ? buf : Buffer.from(buf),
+              contentType: image.contentType || 'image/png',
+            }
+          }
+          return {src: ''}
+        }),
+      },
+    )
+    return firstImage ? (firstImage as any).buffer : null
+  } catch (err) {
+    console.error('extractDocxFirstImage failed:', err)
+    return null
+  }
+}
+
+function wrapText(
+  ctx: any,
+  text: string,
+  maxWidth: number,
+  maxLines: number,
+): string[] {
+  const words = text.split(/\s+/)
+  const lines: string[] = []
+  let current = ''
+  for (const word of words) {
+    const test = current ? current + ' ' + word : word
+    const measured = ctx.measureText(test).width
+    if (measured > maxWidth && current) {
+      lines.push(current)
+      current = word
+      if (lines.length === maxLines - 1) {
+        while (ctx.measureText(current + '...').width > maxWidth && current.length > 0) {
+          current = current.slice(0, -1)
+        }
+        lines.push(current + '...')
+        return lines
+      }
+    } else {
+      current = test
+    }
+  }
+  if (current && lines.length < maxLines) lines.push(current)
+  return lines
+}
+
+function paragraphsFrom(text: string): string[] {
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+    .split(/\n+/)
+    .map((p) => p.replace(/\s+/g, ' ').trim())
+    .filter((p) => p.length > 0)
 }
 
-export function renderDocPlaceholderSvg(title: string, ext: AttachmentExt): string {
-  const label = ext === 'docx' || ext === 'doc' ? 'WORD' : ext === 'pdf' ? 'PDF' : 'DOCUMENT'
-  const safeTitle = escapeXml((title || 'Nieuwsbrief').slice(0, 60))
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1E3A5F"/>
-      <stop offset="100%" stop-color="#152B47"/>
-    </linearGradient>
-  </defs>
-  <rect width="800" height="600" fill="url(#bg)"/>
-  <g transform="translate(400,220)">
-    <rect x="-80" y="-100" width="160" height="200" rx="10" fill="#ffffff" opacity="0.95"/>
-    <rect x="-80" y="-100" width="160" height="40" rx="10" fill="#3B82A0"/>
-    <rect x="-60" y="-30" width="120" height="8" rx="4" fill="#cbd5e1"/>
-    <rect x="-60" y="-10" width="100" height="8" rx="4" fill="#cbd5e1"/>
-    <rect x="-60" y="10" width="120" height="8" rx="4" fill="#cbd5e1"/>
-    <rect x="-60" y="30" width="80" height="8" rx="4" fill="#cbd5e1"/>
-    <rect x="-60" y="50" width="110" height="8" rx="4" fill="#cbd5e1"/>
-    <text x="0" y="-68" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff">${label}</text>
-  </g>
-  <text x="400" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#ffffff">${safeTitle}</text>
-  <text x="400" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#ffffff" opacity="0.8">De Geulstraat</text>
-</svg>`
-}
-
-export async function renderDocPlaceholderPng(title: string, ext: AttachmentExt): Promise<Buffer | null> {
+export async function renderDocPagePreviewPng(
+  title: string,
+  bodyText: string,
+  ext: AttachmentExt,
+): Promise<Buffer | null> {
   try {
     const canvasMod = await import('@napi-rs/canvas')
-    const {createCanvas, GlobalFonts} = canvasMod as any
+    const {createCanvas} = canvasMod as any
 
-    const width = 800
-    const height = 600
+    const width = 1200
+    const height = 800
     const canvas = createCanvas(width, height)
     const ctx = canvas.getContext('2d')
 
-    const grad = ctx.createLinearGradient(0, 0, 0, height)
-    grad.addColorStop(0, '#1E3A5F')
-    grad.addColorStop(1, '#152B47')
-    ctx.fillStyle = grad
+    const bg = ctx.createLinearGradient(0, 0, 0, height)
+    bg.addColorStop(0, '#1E3A5F')
+    bg.addColorStop(1, '#152B47')
+    ctx.fillStyle = bg
     ctx.fillRect(0, 0, width, height)
 
-    const cardX = width / 2 - 80
-    const cardY = 120
-    ctx.fillStyle = 'rgba(255,255,255,0.95)'
+    const paperMargin = 60
+    const paperX = paperMargin
+    const paperY = paperMargin
+    const paperW = width - paperMargin * 2
+    const paperH = height - paperMargin * 2
+
+    ctx.fillStyle = 'rgba(0,0,0,0.25)'
     ctx.beginPath()
-    ctx.roundRect(cardX, cardY, 160, 200, 10)
+    ctx.roundRect(paperX + 8, paperY + 10, paperW, paperH, 12)
     ctx.fill()
 
-    ctx.fillStyle = '#3B82A0'
+    ctx.fillStyle = '#ffffff'
     ctx.beginPath()
-    ctx.roundRect(cardX, cardY, 160, 40, [10, 10, 0, 0] as any)
+    ctx.roundRect(paperX, paperY, paperW, paperH, 12)
     ctx.fill()
+
+    ctx.fillStyle = '#1E3A5F'
+    ctx.beginPath()
+    ctx.roundRect(paperX, paperY, paperW, 70, [12, 12, 0, 0] as any)
+    ctx.fill()
+
+    const label = ext === 'docx' || ext === 'doc' ? 'WORD' : ext === 'pdf' ? 'PDF' : 'DOCUMENT'
+    ctx.fillStyle = 'rgba(255,255,255,0.2)'
+    ctx.beginPath()
+    ctx.roundRect(paperX + paperW - 100, paperY + 18, 80, 34, 6)
+    ctx.fill()
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 14px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(label, paperX + paperW - 60, paperY + 35)
 
     ctx.fillStyle = '#ffffff'
     ctx.font = 'bold 22px sans-serif'
-    ctx.textAlign = 'center'
-    const label = ext === 'docx' || ext === 'doc' ? 'WORD' : ext === 'pdf' ? 'PDF' : 'DOCUMENT'
-    ctx.fillText(label, width / 2, cardY + 28)
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('De Geulstraat', paperX + 30, paperY + 35)
 
-    ctx.fillStyle = '#cbd5e1'
-    const lines = [
-      {x: cardX + 20, y: cardY + 90, w: 120},
-      {x: cardX + 20, y: cardY + 110, w: 100},
-      {x: cardX + 20, y: cardY + 130, w: 120},
-      {x: cardX + 20, y: cardY + 150, w: 80},
-      {x: cardX + 20, y: cardY + 170, w: 110},
-    ]
-    for (const l of lines) {
-      ctx.beginPath()
-      ctx.roundRect(l.x, l.y, l.w, 8, 4)
-      ctx.fill()
+    const contentX = paperX + 50
+    const contentY = paperY + 110
+    const contentW = paperW - 100
+
+    const safeTitle = (title || 'Nieuwsbrief').trim()
+    ctx.fillStyle = '#1E3A5F'
+    ctx.font = 'bold 44px sans-serif'
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'top'
+    const titleLines = wrapText(ctx, safeTitle, contentW, 2)
+    let y = contentY
+    for (const line of titleLines) {
+      ctx.fillText(line, contentX, y)
+      y += 52
     }
 
-    ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 32px sans-serif'
-    ctx.textAlign = 'center'
-    const safeTitle = (title || 'Nieuwsbrief').slice(0, 60)
-    ctx.fillText(safeTitle, width / 2, 430)
+    ctx.strokeStyle = '#3B82A0'
+    ctx.lineWidth = 3
+    ctx.beginPath()
+    ctx.moveTo(contentX, y + 14)
+    ctx.lineTo(contentX + 80, y + 14)
+    ctx.stroke()
+    y += 46
 
-    ctx.font = '20px sans-serif'
-    ctx.fillStyle = 'rgba(255,255,255,0.8)'
-    ctx.fillText('De Geulstraat', width / 2, 470)
+    const paragraphs = paragraphsFrom(bodyText)
+    ctx.fillStyle = '#334155'
+    ctx.font = '22px sans-serif'
+    const lineHeight = 32
+    const bottomLimit = paperY + paperH - 60
+    let linesLeftBudget = Math.floor((bottomLimit - y) / lineHeight)
+
+    for (const para of paragraphs) {
+      if (linesLeftBudget <= 0) break
+      const paraLines = wrapText(ctx, para, contentW, Math.min(linesLeftBudget, 6))
+      for (const line of paraLines) {
+        if (y + lineHeight > bottomLimit) break
+        ctx.fillText(line, contentX, y)
+        y += lineHeight
+        linesLeftBudget--
+      }
+      y += 10
+      linesLeftBudget--
+    }
+
+    if (paragraphs.length === 0 || y === contentY + titleLines.length * 52 + 46) {
+      ctx.fillStyle = '#94a3b8'
+      ctx.font = 'italic 22px sans-serif'
+      ctx.fillText('Lees de volledige nieuwsbrief door erop te klikken.', contentX, y)
+    }
 
     return canvas.toBuffer('image/png')
   } catch (err) {
-    console.error('renderDocPlaceholderPng failed:', err)
+    console.error('renderDocPagePreviewPng failed:', err)
     return null
   }
 }
