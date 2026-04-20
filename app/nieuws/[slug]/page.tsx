@@ -146,25 +146,52 @@ export default async function NewsDetailPage({
           </div>
         )}
 
-        <div className="prose prose-lg max-w-none">
-          <PortableText value={post.body} components={portableTextComponents} />
-        </div>
-
-        {post.attachment?.asset?.url && (
-          <div className="mt-8 p-6 bg-slate-50 rounded-lg border border-slate-200">
-            <a
-              href={post.attachment.asset.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 text-primary hover:text-primary/80 transition-colors"
-            >
-              <FileDown className="h-6 w-6 flex-shrink-0" />
-              <span className="font-medium">
-                {post.attachment.description || post.attachment.asset.originalFilename || 'Download bijlage'}
-              </span>
-            </a>
+        {post.body && post.body.length > 0 && (
+          <div className="prose prose-lg max-w-none">
+            <PortableText value={post.body} components={portableTextComponents} />
           </div>
         )}
+
+        {post.attachment?.asset?.url && (() => {
+          const fileUrl = post.attachment.asset.url
+          const fileName = post.attachment.asset.originalFilename || ''
+          const isPdf = fileUrl.toLowerCase().endsWith('.pdf') || fileName.toLowerCase().endsWith('.pdf')
+
+          return (
+            <div className="mt-8">
+              {isPdf && (
+                <div className="mb-6 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
+                  <object
+                    data={`${fileUrl}#view=FitH`}
+                    type="application/pdf"
+                    className="w-full h-[80vh] min-h-[600px]"
+                    aria-label={post.attachment.description || fileName || 'Nieuwsbrief'}
+                  >
+                    <div className="p-8 text-center text-gray-700">
+                      <p className="mb-4">
+                        Je browser kan de nieuwsbrief niet direct tonen. Gebruik de knop hieronder om te openen of te downloaden.
+                      </p>
+                    </div>
+                  </object>
+                </div>
+              )}
+
+              <div className="p-6 bg-slate-50 rounded-lg border border-slate-200">
+                <a
+                  href={fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-primary hover:text-primary/80 transition-colors"
+                >
+                  <FileDown className="h-6 w-6 flex-shrink-0" />
+                  <span className="font-medium">
+                    {post.attachment.description || (isPdf ? 'Open of download de nieuwsbrief' : (fileName || 'Download bijlage'))}
+                  </span>
+                </a>
+              </div>
+            </div>
+          )
+        })()}
       </article>
     </div>
   )

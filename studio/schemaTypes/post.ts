@@ -144,9 +144,9 @@ export default defineType({
     }),
     defineField({
       name: 'attachment',
-      title: 'Bijlage (PDF/Document)',
+      title: 'Nieuwsbrief / Document (PDF)',
       type: 'file',
-      description: 'Upload hier een PDF of ander document, bijvoorbeeld een nieuwsbrief.',
+      description: 'Upload een PDF (bijv. de nieuwsbrief). Een PDF wordt direct op de pagina getoond alsof het artikel in de website is gebouwd. Andere documenten (Word/Excel) verschijnen als download-link.',
       options: {
         accept: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx'
       },
@@ -154,8 +154,8 @@ export default defineType({
         {
           name: 'description',
           type: 'string',
-          title: 'Beschrijving bijlage',
-          description: 'Bijv. "Download de nieuwsbrief" of "Bekijk het volledige document"',
+          title: 'Tekst voor download-knop (optioneel)',
+          description: 'Bijv. "Download de nieuwsbrief". Laat leeg voor standaardtekst.',
         },
       ],
     }),
