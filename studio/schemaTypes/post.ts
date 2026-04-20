@@ -145,20 +145,13 @@ export default defineType({
     }),
     defineField({
       name: 'attachment',
-      title: 'Nieuwsbrief (PDF)',
+      title: 'Nieuwsbrief (PDF of Word)',
       type: 'file',
       description:
-        'Upload hier de nieuwsbrief als PDF. De PDF wordt direct op de pagina getoond, alsof het artikel in de website is gebouwd - bezoekers kunnen de hele nieuwsbrief meteen lezen zonder te downloaden. ⚠️ Let op: alleen PDF-bestanden werken. Sla Word-documenten eerst op als PDF (Bestand → Opslaan als → PDF).',
+        'Upload hier de nieuwsbrief. PDF wordt direct ingesloten getoond met automatische voorvertoning van de eerste pagina. Word (.docx) wordt inline getoond via de Microsoft Office viewer. Tip: PDF werkt het mooist en snelst.',
       options: {
-        accept: 'application/pdf,.pdf',
+        accept: 'application/pdf,.pdf,.doc,.docx',
       },
-      validation: (Rule) =>
-        Rule.custom((value: any) => {
-          if (!value?.asset?._ref) return true
-          const ref: string = value.asset._ref
-          if (ref.startsWith('file-') && ref.toLowerCase().endsWith('-pdf')) return true
-          return 'Alleen PDF-bestanden zijn toegestaan. Sla je document eerst op als PDF.'
-        }),
       fields: [
         {
           name: 'description',

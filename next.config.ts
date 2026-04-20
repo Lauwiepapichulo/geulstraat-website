@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverExternalPackages: ['@napi-rs/canvas', 'pdfjs-dist', 'mammoth'],
 };
 
 export default nextConfig;

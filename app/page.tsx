@@ -5,6 +5,7 @@ import FadeIn, {StaggerContainer, StaggerItem} from './components/FadeIn'
 import Link from 'next/link'
 import {client} from '@/lib/sanity.client'
 import imageUrlBuilder from '@sanity/image-url'
+import {detectExt, extractExcerpt} from '@/lib/doc-preview'
 
 const builder = imageUrlBuilder(client)
 
@@ -60,6 +61,14 @@ const latestNewsQuery = `*[_type == "post" && isArchived != true && defined(slug
     crop,
     hotspot,
     alt
+  },
+  attachment {
+    asset-> {
+      url,
+      originalFilename,
+      extension,
+      mimeType
+    }
   }
 }`
 
@@ -123,6 +132,27 @@ export default async function Home() {
     client.fetch(upcomingActiesQuery).catch(() => []),
   ])
 
+  const enrichedLatestNews = await Promise.all(
+    (latestNews || []).map(async (post: any) => {
+      const att = post.attachment?.asset
+      const derivedImageUrl = post.mainImage?.asset
+        ? urlFor(post.mainImage).width(800).fit('max').auto('format').url()
+        : att?.url
+          ? `/api/doc-thumbnail?url=${encodeURIComponent(att.url)}&title=${encodeURIComponent(
+              post.title || '',
+            )}&filename=${encodeURIComponent(att.originalFilename || '')}`
+          : undefined
+
+      let derivedExcerpt = generateExcerpt(post.bodyText)
+      if (!derivedExcerpt && att?.url) {
+        const ext = detectExt(att.url, att.originalFilename, att.mimeType)
+        derivedExcerpt = await extractExcerpt(att.url, ext, 200)
+      }
+
+      return {...post, _derivedImageUrl: derivedImageUrl, _derivedExcerpt: derivedExcerpt}
+    }),
+  )
+
   const previewText = homepage?.aboutSectionText 
     || (overDeBuurt?.content ? extractTextPreview(overDeBuurt.content) : null)
     || 'De Geulstraat is een bruisende straat in de Rivierenbuurt met betrokken bewoners en een duidelijk eigen karakter.'
@@ -182,17 +212,17 @@ export default async function Home() {
             </div>
           </FadeIn>
 
-          {latestNews.length > 0 ? (
+          {enrichedLatestNews.length > 0 ? (
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestNews.map((post: any) => {
+              {enrichedLatestNews.map((post: any) => {
                 const slug = post.slug?.current
                 if (!slug) return null
                 return (
                   <StaggerItem key={post._id}>
                     <NewsCard
                       title={post.title}
-                      excerpt={generateExcerpt(post.bodyText)}
-                      imageUrl={post.mainImage?.asset ? urlFor(post.mainImage).width(800).fit('max').auto('format').url() : undefined}
+                      excerpt={post._derivedExcerpt}
+                      imageUrl={post._derivedImageUrl}
                       imageAlt={post.mainImage?.alt || post.title}
                       publishedAt={post.publishedAt}
                       slug={slug}

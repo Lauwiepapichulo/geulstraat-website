@@ -5,6 +5,7 @@ import Breadcrumbs from '@/app/components/Breadcrumbs'
 import {client} from '@/lib/sanity.client'
 import {Calendar, FileDown} from 'lucide-react'
 import imageUrlBuilder from '@sanity/image-url'
+import {detectExt} from '@/lib/doc-preview'
 
 const builder = imageUrlBuilder(client)
 
@@ -27,7 +28,9 @@ const postQuery = `*[_type == "post" && slug.current == $slug][0] {
   attachment {
     asset-> {
       url,
-      originalFilename
+      originalFilename,
+      extension,
+      mimeType
     },
     description
   }
@@ -153,9 +156,18 @@ export default async function NewsDetailPage({
         )}
 
         {post.attachment?.asset?.url && (() => {
-          const fileUrl = post.attachment.asset.url
-          const fileName = post.attachment.asset.originalFilename || ''
-          const isPdf = fileUrl.toLowerCase().endsWith('.pdf') || fileName.toLowerCase().endsWith('.pdf')
+          const asset = post.attachment.asset
+          const fileUrl: string = asset.url
+          const fileName: string = asset.originalFilename || ''
+          const ext = detectExt(fileUrl, fileName, asset.mimeType)
+          const isPdf = ext === 'pdf'
+          const isWord = ext === 'docx' || ext === 'doc'
+          const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`
+          const defaultLabel = isPdf
+            ? 'Open of download de nieuwsbrief'
+            : isWord
+              ? 'Open of download het Word-document'
+              : fileName || 'Download bijlage'
 
           return (
             <div className="mt-8">
@@ -176,6 +188,22 @@ export default async function NewsDetailPage({
                 </div>
               )}
 
+              {isWord && (
+                <div className="mb-6 rounded-lg overflow-hidden border border-slate-200 bg-white">
+                  <iframe
+                    src={officeViewerUrl}
+                    className="w-full h-[80vh] min-h-[600px] border-0"
+                    title={post.attachment.description || fileName || 'Nieuwsbrief'}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    allow="fullscreen"
+                  />
+                  <p className="px-4 py-2 text-xs text-slate-500 bg-slate-50 border-t border-slate-200">
+                    Word-document wordt getoond via de Microsoft Office viewer. Voor de beste leeservaring kan je het document hieronder openen of downloaden.
+                  </p>
+                </div>
+              )}
+
               <div className="p-6 bg-slate-50 rounded-lg border border-slate-200">
                 <a
                   href={fileUrl}
@@ -185,7 +213,7 @@ export default async function NewsDetailPage({
                 >
                   <FileDown className="h-6 w-6 flex-shrink-0" />
                   <span className="font-medium">
-                    {post.attachment.description || (isPdf ? 'Open of download de nieuwsbrief' : (fileName || 'Download bijlage'))}
+                    {post.attachment.description || defaultLabel}
                   </span>
                 </a>
               </div>

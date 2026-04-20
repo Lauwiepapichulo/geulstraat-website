@@ -2,6 +2,7 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import NewsCard from '../components/NewsCard'
 import {client} from '@/lib/sanity.client'
 import imageUrlBuilder from '@sanity/image-url'
+import {detectExt, extractExcerpt} from '@/lib/doc-preview'
 
 const builder = imageUrlBuilder(client)
 
@@ -20,6 +21,14 @@ const postsQuery = `*[_type == "post" && isArchived != true && defined(slug.curr
     crop,
     hotspot,
     alt
+  },
+  attachment {
+    asset-> {
+      url,
+      originalFilename,
+      extension,
+      mimeType
+    }
   }
 }`
 
@@ -53,6 +62,33 @@ export const metadata = {
 export default async function NieuwsPage() {
   const posts = await client.fetch(postsQuery).catch(() => [])
 
+  const enrichedPosts = await Promise.all(
+    (posts || [])
+      .filter((post: any) => post?.slug?.current && post?.title)
+      .map(async (post: any) => {
+        const att = post.attachment?.asset
+        const imageUrl = post.mainImage?.asset
+          ? urlFor(post.mainImage).width(800).fit('max').auto('format').url()
+          : att?.url
+            ? `/api/doc-thumbnail?url=${encodeURIComponent(att.url)}&title=${encodeURIComponent(
+                post.title,
+              )}&filename=${encodeURIComponent(att.originalFilename || '')}`
+            : undefined
+
+        let excerpt = generateExcerpt(post.bodyText)
+        if (!excerpt && att?.url) {
+          const ext = detectExt(att.url, att.originalFilename, att.mimeType)
+          excerpt = await extractExcerpt(att.url, ext, 200)
+        }
+
+        return {
+          ...post,
+          _derivedImageUrl: imageUrl,
+          _derivedExcerpt: excerpt,
+        }
+      }),
+  )
+
   return (
     <div className="min-h-screen bg-[#FAFBFC]">
       <div className="bg-gradient-to-br from-[#1E3A5F] via-[#2D5A87] to-[#152B47] pt-24 md:pt-28 pb-16 md:pb-20">
@@ -71,26 +107,19 @@ export default async function NieuwsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {posts.length > 0 ? (
+        {enrichedPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts
-              .filter((post: any) => post?.slug?.current && post?.title)
-              .map((post: any) => {
-                const imageUrl = post.mainImage?.asset
-                  ? urlFor(post.mainImage).width(800).fit('max').auto('format').url()
-                  : undefined
-                return (
-                  <NewsCard
-                    key={post._id}
-                    title={post.title}
-                    excerpt={generateExcerpt(post.bodyText)}
-                    imageUrl={imageUrl}
-                    imageAlt={post.mainImage?.alt}
-                    publishedAt={post.publishedAt}
-                    slug={post.slug.current}
-                  />
-                )
-              })}
+            {enrichedPosts.map((post: any) => (
+              <NewsCard
+                key={post._id}
+                title={post.title}
+                excerpt={post._derivedExcerpt}
+                imageUrl={post._derivedImageUrl}
+                imageAlt={post.mainImage?.alt}
+                publishedAt={post.publishedAt}
+                slug={post.slug.current}
+              />
+            ))}
           </div>
         ) : (
           <div className="bg-white rounded-xl p-12 text-center shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
