@@ -10,7 +10,7 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true] | order(datumTBD desc, datetime asc) {
+const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true && defined(slug.current)] | order(datumTBD desc, datetime asc) {
   _id,
   title,
   slug,
@@ -28,7 +28,7 @@ const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || dat
   }
 }`
 
-const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD != true && isArchived != true] | order(datetime desc)[0...10] {
+const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD != true && isArchived != true && defined(slug.current)] | order(datetime desc)[0...10] {
   _id,
   title,
   slug,
@@ -124,6 +124,8 @@ export default async function BuurtActiesPage() {
         {upcomingActies.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {upcomingActies.map((actie: any) => {
+              const slug = actie.slug?.current
+              if (!slug) return null
               const imageUrl = actie.image?.asset 
                 ? urlFor(actie.image).width(800).fit('max').auto('format').url()
                 : undefined
@@ -139,7 +141,7 @@ export default async function BuurtActiesPage() {
                     location={actie.location}
                     signupLink={actie.signupLink}
                     acceptsRegistrations={actie.acceptsRegistrations !== false}
-                    slug={actie.slug.current}
+                    slug={slug}
                   />
                 </div>
               )
@@ -163,6 +165,8 @@ export default async function BuurtActiesPage() {
             </summary>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pastActies.map((actie: any) => {
+                const slug = actie.slug?.current
+                if (!slug) return null
                 const imageUrl = actie.image?.asset 
                   ? urlFor(actie.image).width(800).fit('max').auto('format').url()
                   : undefined
@@ -176,7 +180,7 @@ export default async function BuurtActiesPage() {
                     datetime={actie.datetime}
                     datumTBD={actie.datumTBD}
                     location={actie.location}
-                    slug={actie.slug.current}
+                    slug={slug}
                   />
                 )
               })}
