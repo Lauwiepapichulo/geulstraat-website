@@ -3,11 +3,25 @@ import {Button, Card, Flex, Text, Box, Dialog} from '@sanity/ui'
 import {PublishIcon, ResetIcon, CopyIcon, TrashIcon, ArchiveIcon, UndoIcon, WarningOutlineIcon} from '@sanity/icons'
 import {useCallback, useState} from 'react'
 
+// Genereer een webadres (slug) uit een titel
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 96)
+}
+
 export function ActionsField(props: any) {
   const {schemaType} = props
   const documentId = useFormValue(['_id']) as string
   const documentType = useFormValue(['_type']) as string
   const isArchived = useFormValue(['isArchived']) as boolean
+  const title = useFormValue(['title']) as string | undefined
+  const slug = useFormValue(['slug']) as {current?: string} | undefined
   
   const [isProcessing, setIsProcessing] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -22,12 +36,44 @@ export function ActionsField(props: any) {
   const hasDraft = !!editState?.draft
   const isNew = !editState?.published && !editState?.draft
 
+  // Zorgt ervoor dat er altijd een slug is voordat er gepubliceerd wordt.
+  // Geeft true terug als er een slug is gezet (zodat publish even kan wachten).
+  const ensureSlug = useCallback((): boolean => {
+    const hasTitle = !!title && String(title).trim().length > 0
+    const hasSlug = !!slug?.current
+    if (!hasTitle || hasSlug) return false
+
+    let generated = slugify(String(title))
+    // Fallback als de titel alleen uit speciale tekens bestaat
+    if (!generated) generated = `item-${Date.now()}`
+
+    patch.execute([
+      {
+        set: {
+          slug: {
+            _type: 'slug',
+            current: generated,
+          },
+        },
+      },
+    ])
+    return true
+  }, [title, slug, patch])
+
   const handlePublish = useCallback(async () => {
     if (publish.disabled) return
     setIsProcessing('publish')
-    publish.execute()
-    setTimeout(() => setIsProcessing(null), 500)
-  }, [publish])
+
+    // Genereer eerst een slug als die ontbreekt, wacht dan tot de patch
+    // verwerkt is voordat we publiceren.
+    const didSetSlug = ensureSlug()
+    const delay = didSetSlug ? 500 : 0
+
+    setTimeout(() => {
+      publish.execute()
+      setTimeout(() => setIsProcessing(null), 500)
+    }, delay)
+  }, [publish, ensureSlug])
 
   const handleDiscard = useCallback(async () => {
     if (discardChanges.disabled) return
@@ -60,14 +106,16 @@ export function ActionsField(props: any) {
 
   const handleArchive = useCallback(async () => {
     setIsProcessing('archive')
+    // Zorg dat er een slug is en zet de archiefstatus in één keer
+    ensureSlug()
     patch.execute([{set: {isArchived: !isArchived}}])
     setTimeout(() => {
       if (!publish.disabled) {
         publish.execute()
       }
       setIsProcessing(null)
-    }, 200)
-  }, [patch, publish, isArchived])
+    }, 400)
+  }, [patch, publish, isArchived, ensureSlug])
 
   if (!cleanId || isNew) {
     return null
