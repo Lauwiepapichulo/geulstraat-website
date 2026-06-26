@@ -45,11 +45,6 @@ const homepageQuery = `*[_type == "homepage"][0] {
   actiesSectionSubtitle
 }`
 
-// Query for Over de Buurt page (for preview)
-const overDeBuurtQuery = `*[_type == "overDeBuurt" && _id == "over-de-buurt-singleton"][0] {
-  content[0...2]
-}`
-
 const latestNewsQuery = `*[_type == "post" && isArchived != true && defined(title)] | order(publishedAt desc)[0...3] {
   _id,
   title,
@@ -110,18 +105,6 @@ function renderIntro(text: string) {
   )
 }
 
-function extractTextPreview(content: any[]): string {
-  if (!content || content.length === 0) return ''
-  
-  const textBlocks = content
-    .filter((block: any) => block._type === 'block')
-    .flatMap((block: any) => block.children || [])
-    .filter((child: any) => child._type === 'span' && child.text)
-    .map((child: any) => child.text)
-  
-  return textBlocks.join(' ').slice(0, 280) + (textBlocks.join(' ').length > 280 ? '...' : '')
-}
-
 // Helper functie om excerpt te genereren uit body tekst (eerste 2-3 zinnen)
 function generateExcerpt(bodyText: string | null, maxLength: number = 160): string {
   if (!bodyText) return ''
@@ -143,9 +126,8 @@ function generateExcerpt(bodyText: string | null, maxLength: number = 160): stri
 }
 
 export default async function Home() {
-  const [homepage, overDeBuurt, latestNews, upcomingActies] = await Promise.all([
+  const [homepage, latestNews, upcomingActies] = await Promise.all([
     client.fetch(homepageQuery).catch(() => null),
-    client.fetch(overDeBuurtQuery).catch(() => null),
     client.fetch(latestNewsQuery).catch(() => []),
     client.fetch(upcomingActiesQuery).catch(() => []),
   ])
@@ -170,10 +152,6 @@ export default async function Home() {
       return {...post, _derivedImageUrl: derivedImageUrl, _derivedExcerpt: derivedExcerpt}
     }),
   )
-
-  const previewText = homepage?.aboutSectionText 
-    || (overDeBuurt?.content ? extractTextPreview(overDeBuurt.content) : null)
-    || 'Onze buurt loopt van het Maasplein tot de Scheldebuurt: een bruisend stuk Amsterdam met betrokken bewoners en een duidelijk eigen karakter.'
 
   const introText = homepage?.introText
     || 'Wij zijn bewoners van de straten tussen Maasplein en Scheldeplein, die spontaan het idee kregen om iets mét en vóór de buurt te organiseren. Het begon allemaal in de Geulstraat, vandaar dat de URL nog zo heet. Maar het reikt verder: een fijne buurt maken we samen. Er bleken al best wat bewoners-initiatieven te zijn in onze buurt om onze buurt schoon, groen en happy te houden. Samen staan we sterk. Heb je een idee voor jouw straat en/of onze buurt? Meld het hier. We hopen dat veel mensen in onze buurt geïnspireerd worden om mee te doen aan een van de initiatieven.'
@@ -206,11 +184,8 @@ export default async function Home() {
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
               {homepage?.aboutSectionTitle || 'Over de buurt'}
             </h2>
-            <p className="text-lg text-slate-600 leading-relaxed mb-6 max-w-4xl">
-              {renderIntro(introText)}
-            </p>
             <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-4xl">
-              {previewText}
+              {renderIntro(introText)}
             </p>
             <Link
               href="/over-de-buurt"

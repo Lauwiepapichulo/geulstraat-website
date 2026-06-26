@@ -195,9 +195,15 @@ export default defineType({
       datetime: 'datetime',
       media: 'image',
       location: 'location',
+      themes: 'themes',
     },
     prepare(selection) {
-      const {title, datetime, media, location} = selection
+      const {title, datetime, media, location, themes} = selection
+      const labels: Record<string, string> = {
+        'green-team': '🌳 Green',
+        'clean-team': '🧹 Clean',
+        'happy-team': '😊 Happy',
+      }
       const dateStr = datetime
         ? new Date(datetime).toLocaleDateString('nl-NL', {
             day: 'numeric',
@@ -207,9 +213,11 @@ export default defineType({
             minute: '2-digit',
           })
         : 'Geen datum'
+      const themeStr = (themes || []).map((t: string) => labels[t] || t).join(' · ')
+      const base = `${dateStr} - ${location || 'Geen locatie'}`
       return {
         title,
-        subtitle: `${dateStr} - ${location || 'Geen locatie'}`,
+        subtitle: themeStr ? `${base}  •  ${themeStr}` : base,
         media,
       }
     },

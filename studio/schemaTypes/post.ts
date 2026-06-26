@@ -236,13 +236,20 @@ export default defineType({
       title: 'title',
       media: 'mainImage',
       date: 'publishedAt',
+      themes: 'themes',
     },
     prepare(selection) {
-      const {title, media, date} = selection
+      const {title, media, date, themes} = selection
+      const labels: Record<string, string> = {
+        'green-team': '🌳 Green',
+        'clean-team': '🧹 Clean',
+        'happy-team': '😊 Happy',
+      }
       const dateStr = date ? new Date(date).toLocaleDateString('nl-NL') : 'Geen datum'
+      const themeStr = (themes || []).map((t: string) => labels[t] || t).join(' · ')
       return {
         title,
-        subtitle: dateStr,
+        subtitle: themeStr ? `${dateStr}  •  ${themeStr}` : dateStr,
         media,
       }
     },
