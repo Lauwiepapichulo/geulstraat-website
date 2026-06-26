@@ -35,6 +35,7 @@ const homepageQuery = `*[_type == "homepage"][0] {
   },
   slideshowInterval,
   slideshowTransition,
+  introText,
   aboutSectionTitle,
   aboutSectionText,
   aboutSectionButtonText,
@@ -92,6 +93,22 @@ const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || dat
     alt
   }
 }`
+
+// Render welkomsttekst en maak de zinsnede "Meld het hier" een link naar contact
+function renderIntro(text: string) {
+  const phrase = 'Meld het hier'
+  const idx = text.toLowerCase().indexOf(phrase.toLowerCase())
+  if (idx === -1) return <>{text}</>
+  return (
+    <>
+      {text.slice(0, idx)}
+      <Link href="/contact" className="text-[#1E3A5F] font-semibold underline underline-offset-2 hover:text-[#152B47]">
+        {text.slice(idx, idx + phrase.length)}
+      </Link>
+      {text.slice(idx + phrase.length)}
+    </>
+  )
+}
 
 function extractTextPreview(content: any[]): string {
   if (!content || content.length === 0) return ''
@@ -158,6 +175,9 @@ export default async function Home() {
     || (overDeBuurt?.content ? extractTextPreview(overDeBuurt.content) : null)
     || 'Onze buurt loopt van het Maasplein tot de Scheldebuurt: een bruisend stuk Amsterdam met betrokken bewoners en een duidelijk eigen karakter.'
 
+  const introText = homepage?.introText
+    || 'Wij zijn bewoners van de straten tussen Maasplein en Scheldeplein, die spontaan het idee kregen om iets mét en vóór de buurt te organiseren. Het begon allemaal in de Geulstraat, vandaar dat de URL nog zo heet. Maar het reikt verder: een fijne buurt maken we samen. Er bleken al best wat bewoners-initiatieven te zijn in onze buurt om onze buurt schoon, groen en happy te houden. Samen staan we sterk. Heb je een idee voor jouw straat en/of onze buurt? Meld het hier. We hopen dat veel mensen in onze buurt geïnspireerd worden om mee te doen aan een van de initiatieven.'
+
   return (
     <div className="bg-[#FAFBFC]">
       {/* Hero Section */}
@@ -178,6 +198,17 @@ export default async function Home() {
         slideshowInterval={homepage?.slideshowInterval || 5}
         slideshowTransition={homepage?.slideshowTransition || 'fade'}
       />
+
+      {/* Welkomsttekst onder de banner */}
+      <section className="bg-white border-b border-slate-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-16">
+          <FadeIn>
+            <p className="text-lg md:text-xl text-slate-700 leading-relaxed text-center">
+              {renderIntro(introText)}
+            </p>
+          </FadeIn>
+        </div>
+      </section>
 
       {/* Over de buurt Preview Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

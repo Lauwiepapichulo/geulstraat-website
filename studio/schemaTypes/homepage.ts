@@ -126,6 +126,17 @@ export default defineType({
       hidden: ({document}) => document?.enableSlideshow !== true,
     }),
 
+    // === WELKOMSTTEKST (onder de banner) ===
+    defineField({
+      name: 'introText',
+      title: '👋 Welkomsttekst (onder de banner)',
+      type: 'text',
+      rows: 7,
+      description: 'Korte introductie die direct onder de banner verschijnt. De woorden "Meld het hier" worden automatisch een link naar het contactformulier.',
+      initialValue:
+        'Wij zijn bewoners van de straten tussen Maasplein en Scheldeplein, die spontaan het idee kregen om iets mét en vóór de buurt te organiseren. Het begon allemaal in de Geulstraat, vandaar dat de URL nog zo heet. Maar het reikt verder: een fijne buurt maken we samen. Er bleken al best wat bewoners-initiatieven te zijn in onze buurt om onze buurt schoon, groen en happy te houden. Samen staan we sterk. Heb je een idee voor jouw straat en/of onze buurt? Meld het hier. We hopen dat veel mensen in onze buurt geïnspireerd worden om mee te doen aan een van de initiatieven.',
+    }),
+
     // === OVER DE GEULSTRAAT SECTIE ===
     defineField({
       name: 'aboutSectionTitle',
