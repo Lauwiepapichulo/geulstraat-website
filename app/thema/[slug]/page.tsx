@@ -181,7 +181,7 @@ export default async function ThemaPage({params}: {params: Promise<{slug: string
             <p className="text-slate-500 mb-8">
               Wil je meedoen? Laat je gegevens achter en we nemen contact met je op.
             </p>
-            <TeamSignupForm teamName={theme.name} color={theme.color} colorHover={theme.colorHover} />
+            <TeamSignupForm teamName={theme.name} teamValue={theme.value} color={theme.color} colorHover={theme.colorHover} />
           </div>
         </section>
       </div>

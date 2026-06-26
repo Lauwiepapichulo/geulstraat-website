@@ -5,11 +5,12 @@ import {CheckCircle, Loader2, AlertCircle} from 'lucide-react'
 
 interface TeamSignupFormProps {
   teamName: string
+  teamValue: string
   color: string
   colorHover: string
 }
 
-export default function TeamSignupForm({teamName, color, colorHover}: TeamSignupFormProps) {
+export default function TeamSignupForm({teamName, teamValue, color, colorHover}: TeamSignupFormProps) {
   const [formData, setFormData] = useState({name: '', email: '', phone: '', message: ''})
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -23,7 +24,7 @@ export default function TeamSignupForm({teamName, color, colorHover}: TeamSignup
       const response = await fetch('/api/team-signup', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({...formData, team: teamName}),
+        body: JSON.stringify({...formData, team: teamValue, teamName}),
       })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Er ging iets mis')

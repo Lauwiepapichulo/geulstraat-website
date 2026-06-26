@@ -125,6 +125,53 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
 
+      // Teams met aanmeldingen per team
+      S.listItem()
+        .title('Teams')
+        .icon(UsersIcon)
+        .child(
+          S.list()
+            .title('Teamaanmeldingen')
+            .items([
+              S.listItem()
+                .title('Green Team')
+                .icon(UsersIcon)
+                .child(
+                  S.documentTypeList('teamSignup')
+                    .title('Green Team - aanmeldingen')
+                    .filter('_type == "teamSignup" && team == "green-team"')
+                    .defaultOrdering([{field: 'signedUpAt', direction: 'desc'}])
+                ),
+              S.listItem()
+                .title('Clean Team')
+                .icon(UsersIcon)
+                .child(
+                  S.documentTypeList('teamSignup')
+                    .title('Clean Team - aanmeldingen')
+                    .filter('_type == "teamSignup" && team == "clean-team"')
+                    .defaultOrdering([{field: 'signedUpAt', direction: 'desc'}])
+                ),
+              S.listItem()
+                .title('Happy Team')
+                .icon(UsersIcon)
+                .child(
+                  S.documentTypeList('teamSignup')
+                    .title('Happy Team - aanmeldingen')
+                    .filter('_type == "teamSignup" && team == "happy-team"')
+                    .defaultOrdering([{field: 'signedUpAt', direction: 'desc'}])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('Alle aanmeldingen')
+                .icon(ClipboardIcon)
+                .child(
+                  S.documentTypeList('teamSignup')
+                    .title('Alle teamaanmeldingen')
+                    .defaultOrdering([{field: 'signedUpAt', direction: 'desc'}])
+                ),
+            ])
+        ),
+
       S.listItem()
         .title('Fotoalbums')
         .icon(ImagesIcon)

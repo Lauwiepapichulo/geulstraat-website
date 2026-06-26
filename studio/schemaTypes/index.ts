@@ -9,5 +9,6 @@ import navigation from './navigation'
 import homepage from './homepage'
 import wieZijnWij from './wieZijnWij'
 import registration from './registration'
+import teamSignup from './teamSignup'
 
-export const schemaTypes = [post, event, gallery, person, page, overDeBuurt, siteSettings, navigation, homepage, wieZijnWij, registration]
+export const schemaTypes = [post, event, gallery, person, page, overDeBuurt, siteSettings, navigation, homepage, wieZijnWij, registration, teamSignup]
