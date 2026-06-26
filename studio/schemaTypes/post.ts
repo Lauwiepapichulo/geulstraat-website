@@ -32,6 +32,21 @@ export default defineType({
       description: 'Optioneel. Vul in of gebruik "Vertalen naar Engels" om automatisch te laten vertalen.',
     }),
     defineField({
+      name: 'themes',
+      title: 'Thema(s)',
+      type: 'array',
+      description: 'Bij welk team hoort dit bericht? Je mag er meerdere kiezen. Het bericht verschijnt dan automatisch op de bijbehorende themapagina(s).',
+      of: [{type: 'string'}],
+      options: {
+        list: [
+          {title: 'Green Team', value: 'green-team'},
+          {title: 'Clean Team', value: 'clean-team'},
+          {title: 'Happy Team', value: 'happy-team'},
+        ],
+        layout: 'grid',
+      },
+    }),
+    defineField({
       name: 'slug',
       title: 'Webadres (URL)',
       type: 'slug',

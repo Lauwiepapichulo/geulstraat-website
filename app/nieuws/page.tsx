@@ -10,7 +10,7 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const postsQuery = `*[_type == "post" && isArchived != true && defined(slug.current) && defined(title)] | order(publishedAt desc) {
+const postsQuery = `*[_type == "post" && isArchived != true && defined(title)] | order(publishedAt desc) {
   _id,
   title,
   slug,
@@ -56,7 +56,7 @@ function generateExcerpt(bodyText: string | null, maxLength: number = 160): stri
 
 export const metadata = {
   title: 'Nieuws - De Geulstraat',
-  description: 'Blijf op de hoogte van het laatste nieuws uit de Geulstraat',
+  description: 'Blijf op de hoogte van het laatste nieuws uit de buurt',
 }
 
 export default async function NieuwsPage() {
@@ -101,7 +101,7 @@ export default async function NieuwsPage() {
             Nieuws
           </h1>
           <p className="text-xl text-white/90 max-w-2xl">
-            Blijf op de hoogte van het laatste nieuws uit de Geulstraat
+            Blijf op de hoogte van het laatste nieuws uit de buurt
           </p>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default async function NieuwsPage() {
                 imageUrl={post._derivedImageUrl}
                 imageAlt={post.mainImage?.alt}
                 publishedAt={post.publishedAt}
-                slug={post.slug.current}
+                slug={post.slug?.current || post._id}
               />
             ))}
           </div>

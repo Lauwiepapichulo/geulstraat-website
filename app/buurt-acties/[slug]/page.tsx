@@ -12,7 +12,7 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const buurtActieQuery = `*[_type == "buurtActie" && slug.current == $slug][0] {
+const buurtActieQuery = `*[_type == "buurtActie" && (slug.current == $slug || _id == $slug)][0] {
   _id,
   title,
   slug,

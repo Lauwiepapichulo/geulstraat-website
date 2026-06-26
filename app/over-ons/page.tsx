@@ -25,7 +25,7 @@ const wieZijnWijQuery = `*[_type == "wieZijnWij"][0] {
 
 export const metadata = {
   title: 'Over ons - De Geulstraat',
-  description: 'Ontmoet de mensen achter het buurtplatform van de Geulstraat',
+  description: 'Ontmoet de mensen achter het buurtplatform van de buurt',
 }
 
 const portableTextComponents = {
@@ -75,7 +75,7 @@ export default async function OverOnsPage() {
             {pageData?.title || 'Over ons'}
           </h1>
           <p className="text-xl text-white/90 max-w-2xl">
-            Ontmoet de mensen achter het buurtplatform van de Geulstraat
+            Ontmoet de mensen achter het buurtplatform van de buurt
           </p>
         </div>
       </div>

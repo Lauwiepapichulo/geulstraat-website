@@ -1,6 +1,7 @@
 import Hero from './components/Hero'
 import NewsCard from './components/NewsCard'
 import BuurtActieCard from './components/BuurtActieCard'
+import ThemeButtons from './components/ThemeButtons'
 import FadeIn, {StaggerContainer, StaggerItem} from './components/FadeIn'
 import Link from 'next/link'
 import {client} from '@/lib/sanity.client'
@@ -48,7 +49,7 @@ const overDeBuurtQuery = `*[_type == "overDeBuurt" && _id == "over-de-buurt-sing
   content[0...2]
 }`
 
-const latestNewsQuery = `*[_type == "post" && isArchived != true && defined(slug.current) && defined(title)] | order(publishedAt desc)[0...3] {
+const latestNewsQuery = `*[_type == "post" && isArchived != true && defined(title)] | order(publishedAt desc)[0...3] {
   _id,
   title,
   title_en,
@@ -155,16 +156,16 @@ export default async function Home() {
 
   const previewText = homepage?.aboutSectionText 
     || (overDeBuurt?.content ? extractTextPreview(overDeBuurt.content) : null)
-    || 'De Geulstraat is een bruisende straat in de Rivierenbuurt met betrokken bewoners en een duidelijk eigen karakter.'
+    || 'Onze buurt loopt van het Maasplein tot de Scheldebuurt: een bruisend stuk Amsterdam met betrokken bewoners en een duidelijk eigen karakter.'
 
   return (
     <div className="bg-[#FAFBFC]">
       {/* Hero Section */}
       <Hero
-        title={homepage?.heroTitle || 'De fijnste straat van Amsterdam'}
-        subtitle={homepage?.heroSubtitle || 'Ontdek nieuws, buurtacties en meer in de Geulstraat'}
+        title={homepage?.heroTitle || 'Van Maasplein tot Scheldebuurt'}
+        subtitle={homepage?.heroSubtitle || 'Ontdek nieuws, buurtacties en meer'}
         imageUrl={homepage?.heroImage?.asset ? urlFor(homepage.heroImage).width(1600).quality(80).fit('max').auto('format').url() : undefined}
-        imageAlt={homepage?.heroImage?.alt || "De Geulstraat"}
+        imageAlt={homepage?.heroImage?.alt || "Onze buurt"}
         enableSlideshow={homepage?.enableSlideshow === true}
         slides={
           homepage?.heroSlides
@@ -178,12 +179,12 @@ export default async function Home() {
         slideshowTransition={homepage?.slideshowTransition || 'fade'}
       />
 
-      {/* Over de Geulstraat Preview Section */}
+      {/* Over de buurt Preview Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <FadeIn>
           <div className="bg-white rounded-xl p-8 md:p-12 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
-              {homepage?.aboutSectionTitle || 'Over de Geulstraat'}
+              {homepage?.aboutSectionTitle || 'Over de buurt'}
             </h2>
             <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-4xl">
               {previewText}
@@ -192,9 +193,24 @@ export default async function Home() {
               href="/over-de-buurt"
               className="inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:shadow-lg min-h-[56px]"
             >
-              {homepage?.aboutSectionButtonText || 'Lees meer over de Geulstraat'}
+              {homepage?.aboutSectionButtonText || 'Lees meer over de historie'}
             </Link>
           </div>
+        </FadeIn>
+      </section>
+
+      {/* Thema-knoppen (Green / Clean / Happy Team) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 md:pb-8">
+        <FadeIn>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-3">
+              Doe mee met een team
+            </h2>
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+              Kies een thema en ontdek de acties, het nieuws en hoe je kunt meedoen.
+            </p>
+          </div>
+          <ThemeButtons />
         </FadeIn>
       </section>
 
@@ -207,7 +223,7 @@ export default async function Home() {
                 {homepage?.newsSectionTitle || 'Het laatste nieuws'}
               </h2>
               <p className="text-lg text-slate-500">
-                {homepage?.newsSectionSubtitle || 'Blijf op de hoogte van wat er speelt in de Geulstraat'}
+                {homepage?.newsSectionSubtitle || 'Blijf op de hoogte van wat er speelt in de buurt'}
               </p>
             </div>
           </FadeIn>
@@ -215,8 +231,7 @@ export default async function Home() {
           {enrichedLatestNews.length > 0 ? (
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {enrichedLatestNews.map((post: any) => {
-                const slug = post.slug?.current
-                if (!slug) return null
+                const slug = post.slug?.current || post._id
                 return (
                   <StaggerItem key={post._id}>
                     <NewsCard
@@ -274,8 +289,7 @@ export default async function Home() {
           {upcomingActies.length > 0 ? (
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {upcomingActies.map((actie: any) => {
-                const slug = actie.slug?.current
-                if (!slug) return null
+                const slug = actie.slug?.current || actie._id
                 return (
                   <StaggerItem key={actie._id}>
                     <BuurtActieCard

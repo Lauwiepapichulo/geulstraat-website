@@ -9,7 +9,7 @@ const siteSettingsQuery = `*[_type == "siteSettings"][0] {
 
 export const metadata = {
   title: 'Contact - De Geulstraat',
-  description: 'Neem contact op met de Geulstraat',
+  description: 'Neem contact op met de buurt',
 }
 
 export default async function ContactPage() {

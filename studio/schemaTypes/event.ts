@@ -33,6 +33,21 @@ export default defineType({
       description: 'Optioneel. Vul in of gebruik "Vertalen naar Engels".',
     }),
     defineField({
+      name: 'themes',
+      title: 'Thema(s)',
+      type: 'array',
+      description: 'Bij welk team hoort deze actie? Je mag er meerdere kiezen. De actie verschijnt dan automatisch op de bijbehorende themapagina(s).',
+      of: [{type: 'string'}],
+      options: {
+        list: [
+          {title: 'Green Team', value: 'green-team'},
+          {title: 'Clean Team', value: 'clean-team'},
+          {title: 'Happy Team', value: 'happy-team'},
+        ],
+        layout: 'grid',
+      },
+    }),
+    defineField({
       name: 'slug',
       title: 'Webadres',
       type: 'slug',

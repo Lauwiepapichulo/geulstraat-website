@@ -13,7 +13,7 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const postQuery = `*[_type == "post" && slug.current == $slug][0] {
+const postQuery = `*[_type == "post" && (slug.current == $slug || _id == $slug)][0] {
   _id,
   title,
   slug,

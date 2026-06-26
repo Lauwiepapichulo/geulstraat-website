@@ -14,7 +14,7 @@ export default defineType({
       title: 'Banner titel',
       type: 'string',
       description: 'De grote tekst op de banner',
-      initialValue: 'Bij ons in de Geulstraat',
+      initialValue: 'Van Maasplein tot Scheldebuurt',
     }),
     defineField({
       name: 'heroSubtitle',
@@ -22,7 +22,7 @@ export default defineType({
       type: 'text',
       rows: 2,
       description: 'De kleinere tekst onder de titel',
-      initialValue: 'De fijnste straat van Amsterdam',
+      initialValue: 'Ontdek nieuws, buurtacties en meer',
     }),
     defineField({
       name: 'enableSlideshow',
@@ -129,25 +129,25 @@ export default defineType({
     // === OVER DE GEULSTRAAT SECTIE ===
     defineField({
       name: 'aboutSectionTitle',
-      title: '📖 Over de Geulstraat - Titel',
+      title: '📖 Over de buurt - Titel',
       type: 'string',
       description: 'De titel van deze sectie op de homepage',
-      initialValue: 'Over de Geulstraat',
+      initialValue: 'Over de buurt',
     }),
     defineField({
       name: 'aboutSectionText',
-      title: '📖 Over de Geulstraat - Tekst',
+      title: '📖 Over de buurt - Tekst',
       type: 'text',
       rows: 4,
       description: 'De tekst die in dit blok wordt getoond',
-      initialValue: 'De Geulstraat is een bruisende straat in de Rivierenbuurt met betrokken bewoners en een duidelijk eigen karakter.',
+      initialValue: 'Onze buurt loopt van het Maasplein tot de Scheldebuurt: een bruisend stuk Amsterdam met betrokken bewoners en een duidelijk eigen karakter.',
     }),
     defineField({
       name: 'aboutSectionButtonText',
-      title: '📖 Over de Geulstraat - Knoptekst',
+      title: '📖 Over de buurt - Knoptekst',
       type: 'string',
       description: 'De tekst op de knop',
-      initialValue: 'Lees meer over de Geulstraat',
+      initialValue: 'Lees meer over de historie',
     }),
 
     // === NIEUWS SECTIE ===
@@ -163,7 +163,7 @@ export default defineType({
       title: '📰 Nieuws - Ondertitel',
       type: 'string',
       description: 'De tekst onder de titel',
-      initialValue: 'Blijf op de hoogte van wat er speelt in de Geulstraat',
+      initialValue: 'Blijf op de hoogte van wat er speelt in de buurt',
     }),
 
     // === BUURTACTIES SECTIE ===

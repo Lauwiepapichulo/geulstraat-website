@@ -42,7 +42,7 @@ export default async function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4 text-white">{siteSettings?.title || 'De Geulstraat'}</h3>
             <p className="text-slate-300 leading-relaxed">
-              Blijf op de hoogte van nieuws, buurtacties en activiteiten in de Geulstraat.
+              Blijf op de hoogte van nieuws, buurtacties en activiteiten in de buurt.
             </p>
           </div>
 

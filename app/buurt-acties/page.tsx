@@ -10,7 +10,7 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true && defined(slug.current)] | order(datumTBD desc, datetime asc) {
+const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || datumTBD == true) && isArchived != true] | order(datumTBD desc, datetime asc) {
   _id,
   title,
   slug,
@@ -28,7 +28,7 @@ const upcomingActiesQuery = `*[_type == "buurtActie" && (datetime > now() || dat
   }
 }`
 
-const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD != true && isArchived != true && defined(slug.current)] | order(datetime desc)[0...10] {
+const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD != true && isArchived != true] | order(datetime desc)[0...10] {
   _id,
   title,
   slug,
@@ -46,7 +46,7 @@ const pastActiesQuery = `*[_type == "buurtActie" && datetime < now() && datumTBD
 
 export const metadata = {
   title: 'Buurtacties - De Geulstraat',
-  description: 'Bekijk alle aankomende buurtacties en activiteiten in de Geulstraat',
+  description: 'Bekijk alle aankomende buurtacties en activiteiten in de buurt',
 }
 
 export default async function BuurtActiesPage() {
@@ -67,7 +67,7 @@ export default async function BuurtActiesPage() {
             Buurtacties
           </h1>
           <p className="text-xl text-white/90 max-w-2xl">
-            Doe mee aan activiteiten in de Geulstraat en ontmoet je buren
+            Doe mee aan activiteiten in de buurt en ontmoet je buren
           </p>
         </div>
       </div>
@@ -124,8 +124,7 @@ export default async function BuurtActiesPage() {
         {upcomingActies.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {upcomingActies.map((actie: any) => {
-              const slug = actie.slug?.current
-              if (!slug) return null
+              const slug = actie.slug?.current || actie._id
               const imageUrl = actie.image?.asset 
                 ? urlFor(actie.image).width(800).fit('max').auto('format').url()
                 : undefined
@@ -165,8 +164,7 @@ export default async function BuurtActiesPage() {
             </summary>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pastActies.map((actie: any) => {
-                const slug = actie.slug?.current
-                if (!slug) return null
+                const slug = actie.slug?.current || actie._id
                 const imageUrl = actie.image?.asset 
                   ? urlFor(actie.image).width(800).fit('max').auto('format').url()
                   : undefined

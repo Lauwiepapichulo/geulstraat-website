@@ -116,7 +116,7 @@ function AnimatedInfinity({ delay = 0 }: { delay?: number }) {
 }
 
 export default function Hero({
-  title = "Bij ons in de Geulstraat",
+  title = "Van Maasplein tot Scheldebuurt",
   subtitle = "De fijnste straat van Amsterdam",
   imageUrl,
   imageAlt = "Hero image",
@@ -188,8 +188,16 @@ export default function Hero({
           )}
         </AnimatePresence>
         
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/60 z-10" />
+        {/* Gradient overlay - sterker voor leesbaarheid van de tekst */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/45 to-black/70 z-10" />
+        {/* Extra donkere laag in het midden waar de tekst staat */}
+        <div
+          className="absolute inset-0 z-10"
+          style={{
+            background:
+              'radial-gradient(ellipse 80% 60% at 50% 45%, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 70%)',
+          }}
+        />
       </motion.div>
 
       {/* Slideshow Indicators */}
