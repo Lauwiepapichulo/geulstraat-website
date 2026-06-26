@@ -87,7 +87,7 @@ export default function BuurtActieCard({
         </div>
 
         {/* Title */}
-        <Link href={`/buurt-acties/${slug}`}>
+        <Link href={`/buurt-acties/${encodeURIComponent(slug)}`}>
           <h3 className="text-xl font-bold text-slate-800 mb-3 line-clamp-2 hover:text-[#1E3A5F] transition-colors duration-300">
             {title}
           </h3>
@@ -111,7 +111,7 @@ export default function BuurtActieCard({
             </a>
           ) : (
             <Link
-              href={`/buurt-acties/${slug}`}
+              href={`/buurt-acties/${encodeURIComponent(slug)}`}
               className="w-full inline-flex items-center justify-center bg-[#1E3A5F] hover:bg-[#152B47] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:shadow-lg min-h-[44px]"
             >
               {acceptsRegistrations ? 'Aanmelden' : 'Meer informatie'}

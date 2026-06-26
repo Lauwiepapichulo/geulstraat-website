@@ -36,7 +36,7 @@ export default function NewsCard({
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60 h-full flex flex-col group"
     >
-      <Link href={`/nieuws/${slug}`} className="block flex-grow flex flex-col">
+      <Link href={`/nieuws/${encodeURIComponent(slug)}`} className="block flex-grow flex flex-col">
         {/* Image */}
         <div className="relative h-52 bg-gradient-to-br from-[#1E3A5F] to-[#3B82A0] overflow-hidden">
           {imageUrl ? (

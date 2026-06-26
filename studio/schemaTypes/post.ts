@@ -50,7 +50,8 @@ export default defineType({
       name: 'slug',
       title: 'Webadres (URL)',
       type: 'slug',
-      description: 'Wordt automatisch aangemaakt. Klik op "Generate" als er nog niets staat.',
+      hidden: true, // Verborgen - wordt automatisch gegenereerd bij publiceren
+      description: 'Wordt automatisch aangemaakt op basis van de titel.',
       options: {
         source: 'title',
         maxLength: 96,
@@ -61,7 +62,6 @@ export default defineType({
           .slice(0, 96),
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
-      validation: (Rule) => Rule.required().error('Een webadres is verplicht. Klik op de "Generate" knop.'),
     }),
     defineField({
       name: 'isArchived',
