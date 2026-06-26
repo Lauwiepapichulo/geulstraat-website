@@ -160,7 +160,7 @@ export default function Hero({
   return (
     <section 
       ref={containerRef}
-      className="relative h-[600px] md:h-[700px] flex items-center justify-center overflow-hidden"
+      className="relative h-[80vh] min-h-[600px] md:min-h-[700px] flex items-center justify-center overflow-hidden"
     >
       {/* Background with Parallax */}
       <motion.div 

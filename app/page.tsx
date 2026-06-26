@@ -199,24 +199,16 @@ export default async function Home() {
         slideshowTransition={homepage?.slideshowTransition || 'fade'}
       />
 
-      {/* Welkomsttekst onder de banner */}
-      <section className="bg-white border-b border-slate-100">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-16">
-          <FadeIn>
-            <p className="text-lg md:text-xl text-slate-700 leading-relaxed text-center">
-              {renderIntro(introText)}
-            </p>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Over de buurt Preview Section */}
+      {/* Over de buurt Preview Section (incl. welkomsttekst) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <FadeIn>
           <div className="bg-white rounded-xl p-8 md:p-12 shadow-[0_4px_20px_-4px_rgb(30_58_95/0.08)] border border-slate-200/60">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
               {homepage?.aboutSectionTitle || 'Over de buurt'}
             </h2>
+            <p className="text-lg text-slate-600 leading-relaxed mb-6 max-w-4xl">
+              {renderIntro(introText)}
+            </p>
             <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-4xl">
               {previewText}
             </p>
